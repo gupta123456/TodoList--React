@@ -1,0 +1,25 @@
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
+import { CustomerInfoComponent } from './component/customer-info/customer-info.component';
+import { LayoutComponent } from './shared/layout/layout.component';
+import { HostelInfoComponent } from './component/hostel-info/hostel-info.component';
+import { RentInfoComponent } from './component/rent-info/rent-info.component';
+
+
+const routes: Routes = [
+  { path: '', redirectTo: 'hostel-info', pathMatch: 'full' },
+  {
+    path: '', component: LayoutComponent, children: [
+      { path: 'hostel-info', component: HostelInfoComponent },
+      { path: 'customer-info', component: CustomerInfoComponent },
+      { path: 'rent-info', component: RentInfoComponent }
+    ]
+  },
+  { path: '**', redirectTo: 'hostel-info', pathMatch: 'full' }
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }

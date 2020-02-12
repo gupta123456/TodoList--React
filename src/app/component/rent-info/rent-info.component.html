@@ -1,0 +1,301 @@
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>General Form</h1>
+                </div>
+                <!-- <div class="col-sm-6">
+                    <div class="breadcrumb float-sm-right">
+                        <button type="button" class="btn btn-primary" (click)="btnAddModal()" data-toggle="modal">
+                            Add <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                </div> -->
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- left column -->
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Rent Info</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <!-- form start -->
+                        <form role="form" [formGroup]="rentForm">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="hostelID">Hostel</label>
+                                            <select class="form-control" id="hostelID" formControlName='hostelID'
+                                                (change)="getCustomer($event.target.value)">
+                                                <option value="0" selected>-- Select hostel --</option>
+                                                <option *ngFor="let item of hostelData" value="{{item._id}}">
+                                                    {{item.name}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="hostelID">Customer</label>
+                                            <select class="form-control" id="customerID" formControlName='customerID'>
+                                                <option value="0" selected>-- Select hostel --</option>
+                                                <option *ngFor="let item of customerData" value="{{item._id}}">
+                                                    {{item.firstName + ' '+ item.lastName}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div> -->
+                                </div>
+                            </div>
+                        </form>
+                        <div class="card">
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                    </div>
+                    <!-- /.card -->
+
+                </div>
+                <!--/.col (right) -->
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- left column -->
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Rent Info</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <!-- form start -->
+                        <div class="card">
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <table class="table table-striped" [svData]="customerData" #sv="svDataTable"
+                                    [svRowsOnPage]="10" svSortOrder="asc">
+                                    <thead>
+                                        <tr>
+                                            <th>S.No.</th>
+                                            <th>Name</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of sv.data; let i = index">
+                                            <td>{{i+1}}</td>
+                                            <td>{{ item.firstName +' '+ item.lastName }}</td>
+                                            <td>
+                                                <a href="javascript:void(0)" title="Generate Bill"
+                                                    (click)="openBillModal(item)">Generate Bill</a>
+                                                <!-- <a href="javascript:void(0)" (click)="deleteModal(item)">Pay</a> -->
+                                            </td>
+                                        </tr>
+                                        <tr *ngIf="customerData.length<1">
+                                            <td></td>
+                                            <td>No data available</td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="4">
+                                                <sv-bootstrap-paginator [rowsOnPageSet]="[10, 25]">
+                                                </sv-bootstrap-paginator>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                    </div>
+                    <!-- /.card -->
+
+                </div>
+                <!--/.col (right) -->
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
+
+<!-- Modals -->
+<div class="backdrop" [style.display]="modalBackDrop ? 'block' :'none' "></div>
+<div class="modal-backdrop show" [style.display]="modalBackDrop ? 'block' :'none' "></div>
+<div class="modal" role="dialog" tabindex="-1" id="modal-add" [style.display]="generateBillModal ? 'block' :'none' ">
+    <div class="modal-dialog  modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Generate Bill</h4>
+                <button type="button" class="close" (click)="btnCloseModal()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form role="form" [formGroup]="customerBillForm">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="hostelID">Name</label>
+                                    <label class="form-control">{{customerName}}</label>
+                                    <input type="hidden" formControlName='customerID'>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="">Rent Amount</label>
+                                    <label class="form-control">{{rentAmount}}</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="billMonth">Month</label>
+                                            <select class="form-control" id="billMonth" formControlName='billMonth'
+                                                (ngModelChange)="getDueAmount()">
+                                                <option value="0" selected>-- Select --</option>
+                                                <option *ngFor="let item of month; let i = index" [ngValue]="i+1">
+                                                    {{item}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="billYear">Year</label>
+                                            <select class="form-control" id="billYear" formControlName='billYear'
+                                                (ngModelChange)="getDueAmount()">
+                                                <option value="0" selected>-- Select --</option>
+                                                <option *ngFor="let item of year" [ngValue]="item">
+                                                    {{item}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="electricityBill">Electricity Bill</label>
+                                    <input type="number" class="form-control" id="electricityBill"
+                                        formControlName='electricityBill' name="electricityBill"
+                                        placeholder="Enter security amount" autofocus autocomplete="off" maxlength="5">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="waterBill">Water Bill</label>
+                                    <input type="number" class="form-control" id="waterBill" formControlName='waterBill'
+                                        name="waterBill" placeholder="Enter security amount" autofocus
+                                        autocomplete="off" maxlength="5">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Previous Due Amount</label>
+                                    <label class="form-control">{{previousDue}}</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer justify-content-between admin-modal">
+                <button type="button" [disabled]="!customerBillForm.valid || customerBillForm.value.billMonth=='0'
+                || customerBillForm.value.billYear == '0'" class="btn btn-primary modal-button"
+                    (click)="generateBill()">Generate Bill</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal" role="dialog" tabindex="-1" id="modal-add" [style.display]="finalBillModal ? 'block' :'none' ">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Generate Bill</h4>
+                <button type="button" class="close" (click)="btnClosefinalBillModal()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div role="form">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label for="hostelID">Name</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <label class="form-control">{{customerName}}</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="hostelID">Rent Amount</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <label class="form-control">{{rentAmount}}</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="hostelID">Electricity Bill</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <label class="form-control">{{electricityBill}}</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="hostelID">Water Bill</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <label class="form-control">{{waterBill}}</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="hostelID">Previous Due</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <label class="form-control">{{previousDue}}</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="hostelID">Total</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <label class="form-control">{{totalPayAmount}}</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between admin-modal">
+                <button type="button" class="btn btn-primary modal-button"
+                    (click)="btnClosefinalBillModal()">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+<ngx-spinner></ngx-spinner>

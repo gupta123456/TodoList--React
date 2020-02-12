@@ -1,0 +1,222 @@
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>General Form</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <button type="button" class="btn btn-primary" (click)="btnAddModal()" data-toggle="modal">
+              Add <i class="fa fa-plus"></i>
+            </button>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+          <!-- general form elements -->
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title">Customer</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card">
+              <!-- /.card-header -->
+              <div class="card-body">
+                <table class="table table-striped" [svData]="customerData" #sv="svDataTable" [svRowsOnPage]="10"
+                  svSortOrder="asc">
+                  <thead>
+                    <tr>
+                      <th>S.No.</th>
+                      <th>Name</th>
+                      <th>Contact Number</th>
+                      <th>Father Name</th>
+                      <th>Family Number</th>
+                      <th>Created Date</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of sv.data; let i = index">
+                      <td>{{i+1}}</td>
+                      <td>{{ item.firstName + ' '+ item.lastName }}</td>
+                      <td>{{ item.customerNo }}</td>
+                      <td>{{ item.fatherName }}</td>
+                      <td>{{ item.familyContactNo }}</td>
+                      <td>{{ item.createdDate | date :'dd-MM-yyyy' }}</td>
+                      <td>
+                        <i class="fa fa-edit" title="Edit" (click)="editCustomer(item)"></i>
+                        <i class="fa fa-trash" data-toggle="modal" (click)="deleteModal(item)"></i>
+                      </td>
+                    </tr>
+                    <tr *ngIf="customerData!=undefined && customerData.length<1">
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td>No data available</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td colspan="4">
+                        <sv-bootstrap-paginator [rowsOnPageSet]="[10, 25]">
+                        </sv-bootstrap-paginator>
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+          </div>
+          <!-- /.card -->
+
+        </div>
+        <!--/.col (right) -->
+      </div>
+      <!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </section>
+  <!-- /.content -->
+</div>
+
+<!-- Modals -->
+<div class="backdrop" [style.display]="modalBackDrop ? 'block' :'none' "></div>
+<div class="modal-backdrop show" [style.display]="modalBackDrop ? 'block' :'none' "></div>
+<div class="modal" role="dialog" tabindex="-1" id="modal-add" [style.display]="modalAddUpdate ? 'block' :'none' ">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{lblAddModalTitle}} Customer</h4>
+        <button type="button" class="close" (click)="btnCloseModal()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form role="form" [formGroup]="customerForm">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <!-- input value for customer -->
+                  <input type="hidden" formControlName='_id'>
+                  <label for="hostelID">Hostel</label>
+                  <select class="form-control" id="hostelID" formControlName='hostelID'>
+                    <option value="0" selected>-- Select hostel --</option>
+                    <option *ngFor="let item of hostelData" value="{{item._id}}">
+                      {{item.name}}
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="firstName">First Name</label>
+                  <input type="text" class="form-control" id="firstName" formControlName='firstName' name="firstName"
+                    placeholder="Enter first name" autofocus autocomplete="off" maxlength="15">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="lastName">Last Name</label>
+                  <input type="text" class="form-control" id="lastName" formControlName='lastName' name="lastName"
+                    placeholder="Enter last name" autofocus autocomplete="off" maxlength="15">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="customerNo">Contact number</label>
+                  <input type="text" class="form-control" id="customerNo" formControlName='customerNo' name="customerNo"
+                    placeholder="Enter contact Number" autofocus autocomplete="off" maxlength="10">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="fatherName">Father Name</label>
+                  <input type="text" class="form-control" id="fatherName" formControlName='fatherName' name="fatherName"
+                    placeholder="Enter father name" autofocus autocomplete="off" maxlength="50">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="familyContactNo">Family contact no</label>
+                  <input type="text" class="form-control" id="familyContactNo" formControlName='familyContactNo'
+                    name="familyContactNo" placeholder="Enter family contact no" autofocus autocomplete="off"
+                    maxlength="15">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="rentAmount">Rent per month</label>
+                  <input type="number" class="form-control" id="rentAmount" formControlName='rentAmount'
+                    name="rentAmount" placeholder="Enter room rent" autofocus autocomplete="off" maxlength="5">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="securityAmount">Security amount</label>
+                  <input type="number" class="form-control" id="securityAmount" formControlName='securityAmount'
+                    name="securityAmount" placeholder="Enter security amount" autofocus autocomplete="off"
+                    maxlength="5">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="checkInDate">Check-In Date</label>
+                  <input type="date" class="form-control" id="checkInDate" formControlName='checkInDate'>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="checkOutDate">Check-Out Date</label>
+                  <input type="date" class="form-control" id="checkOutDate" formControlName='checkOutDate'>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer justify-content-between admin-modal">
+        <button type="button" [disabled]="!customerForm.valid" class="btn btn-primary modal-button"
+          (click)="addUpdateHostel()">Save changes</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+<div class="modal" id="modal-delete" [style.display]="modalDelete ? 'block' :'none' ">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Delete Customer</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="btnCloseDeleteModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure?</p>
+      </div>
+      <div class="modal-footer justify-content-between admin-modal">
+        <button type="button" class="btn btn-primary modal-button" (click)="confirmDelete()">Save changes</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+<ngx-spinner></ngx-spinner>
