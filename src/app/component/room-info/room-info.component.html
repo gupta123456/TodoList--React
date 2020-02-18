@@ -16,7 +16,45 @@
             </div>
         </div><!-- /.container-fluid -->
     </section>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- left column -->
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Room Info</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <!-- form start -->
+                        <div role="form">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="hostelID">Hostel</label>
+                                            <select class="form-control" id="hostelID"
+                                                (change)="getRoom($event.target.value)">
+                                                <option value="0" selected>-- Select hostel --</option>
+                                                <option *ngFor="let item of hostelData" value="{{item._id}}">
+                                                    {{item.name}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card -->
 
+                </div>
+                <!--/.col (right) -->
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </section>
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
@@ -26,7 +64,7 @@
                     <!-- general form elements -->
                     <div class="card card-primary">
                         <div class="card-header">
-                            <h3 class="card-title">Hostel</h3>
+                            <h3 class="card-title">Room</h3>
                         </div>
                         <!-- /.card-header -->
                         <!-- form start -->
@@ -34,12 +72,12 @@
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <table class="table table-striped" [svData]="roomData" #sv="svDataTable"
-                                    [svRowsOnPage]="10" svSortOrder="asc">
+                                    [svRowsOnPage]="10" svSortOrder="desc">
                                     <thead>
                                         <tr>
                                             <th>S.No.</th>
                                             <th>Name</th>
-                                            <th>Created Date</th>
+                                            <th><sv-default-sorter by="createdDate">Created Date</sv-default-sorter></th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -50,10 +88,12 @@
                                             <td>{{ item.createdDate | date :'dd-MM-yyyy' }}</td>
                                             <td>
                                                 <i class="fa fa-edit" title="Edit" (click)="editModel(item)"></i>
-                                                <i class="fa fa-trash" data-toggle="modal" (click)="deleteModal(item)"></i>
+                                                <i class="fa fa-trash" data-toggle="modal"
+                                                    (click)="deleteModal(item)"></i>
                                             </td>
                                         </tr>
-                                        <tr *ngIf="roomData!=undefined && roomData.length<1">
+                                        <tr *ngIf="!roomData">
+                                            <td></td>
                                             <td></td>
                                             <td>No data available</td>
                                             <td></td>
@@ -96,15 +136,27 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form role="form" [formGroup]="hostelForm">
+                <form role="form" [formGroup]="form">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
+                                    <!-- input value for customer -->
+                                    <input type="hidden" formControlName='_id'>
+                                    <label for="hostelID">Hostel</label>
+                                    <select class="form-control" id="hostelID" formControlName='hostelID'>
+                                        <option value='0' selected>-- Select hostel --</option>
+                                        <option *ngFor="let item of hostelData" [ngValue]="item._id">
+                                            {{item.name}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
                                     <label for="name">Name</label>
                                     <input type="text" class="form-control" id="name" formControlName='name' name="Name"
-                                        placeholder="Enter hostel name" autofocus autocomplete="off" maxlength="15">
-                                    <input type="hidden" formControlName='_id' />
+                                        placeholder="Enter room name" autofocus autocomplete="off" maxlength="15">
                                 </div>
                             </div>
                         </div>
@@ -112,8 +164,8 @@
                 </form>
             </div>
             <div class="modal-footer justify-content-between admin-modal">
-                <button type="button" [disabled]="!hostelForm.valid" class="btn btn-primary modal-button"
-                    (click)="addUpdateHostel()">Save changes</button>
+                <button type="button" [disabled]="!form.valid || form.hostelID=='0'" class="btn btn-primary modal-button"
+                    (click)="addUpdateRoom()">Save changes</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -121,12 +173,13 @@
     <!-- /.modal-dialog -->
 </div>
 
-<div class="modal" id="modal-delete"  [style.display]="modalDelete ? 'block' :'none' ">
+<div class="modal" id="modal-delete" [style.display]="modalDelete ? 'block' :'none' ">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Delete Hostel</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="btnCloseDeleteModal()">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                    (click)="btnCloseDeleteModal()">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -134,7 +187,8 @@
                 <p>Are you sure?</p>
             </div>
             <div class="modal-footer justify-content-between admin-modal">
-                <button type="button" class="btn btn-primary modal-button" (click)="deleteHostel()">Save changes</button>
+                <button type="button" class="btn btn-primary modal-button" (click)="deleteRoom()">Save
+                    changes</button>
             </div>
         </div>
         <!-- /.modal-content -->

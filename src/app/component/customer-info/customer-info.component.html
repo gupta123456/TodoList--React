@@ -16,7 +16,55 @@
       </div>
     </div><!-- /.container-fluid -->
   </section>
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+          <!-- general form elements -->
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title">Customer Info</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+            <div role="form">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="hostelID">Hostel</label>
+                      <select class="form-control" id="hostelID" (change)="getRoom($event.target.value)">
+                        <option value="0" selected>-- Select hostel --</option>
+                        <option *ngFor="let item of hostelData" value="{{item._id}}">
+                          {{item.name}}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="hostelID">Room</label>
+                      <select class="form-control" id="hostelID" (change)="getCustomer($event.target.value)">
+                        <option value="0" selected>-- Select room --</option>
+                        <option *ngFor="let item of roomData" value="{{item._id}}">
+                          {{item.name}}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /.card -->
 
+        </div>
+        <!--/.col (right) -->
+      </div>
+      <!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </section>
   <!-- Main content -->
   <section class="content">
     <div class="container-fluid">
@@ -58,7 +106,7 @@
                         <i class="fa fa-trash" data-toggle="modal" (click)="deleteModal(item)"></i>
                       </td>
                     </tr>
-                    <tr *ngIf="customerData!=undefined && customerData.length<1">
+                    <tr *ngIf="!customerData">
                       <td></td>
                       <td></td>
                       <td></td>
@@ -113,9 +161,21 @@
                   <!-- input value for customer -->
                   <input type="hidden" formControlName='_id'>
                   <label for="hostelID">Hostel</label>
-                  <select class="form-control" id="hostelID" formControlName='hostelID'>
+                  <select class="form-control" id="hostelID" formControlName='hostelID'
+                  (change)="getRoom($event.target.value)">
                     <option value="0" selected>-- Select hostel --</option>
                     <option *ngFor="let item of hostelData" value="{{item._id}}">
+                      {{item.name}}
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="roomID">Room</label>
+                  <select class="form-control" id="roomID"  formControlName='roomID'>
+                    <option value="0" selected>-- Select room --</option>
+                    <option *ngFor="let item of roomData" value="{{item._id}}">
                       {{item.name}}
                     </option>
                   </select>

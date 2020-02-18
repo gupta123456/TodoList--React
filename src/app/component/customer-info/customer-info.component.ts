@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { CommonService } from '../../common/common.service';
 import { NgxSpinnerService } from "ngx-spinner";
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-customer-info',
@@ -18,8 +19,11 @@ export class CustomerInfoComponent implements OnInit {
   modalDelete = false;
   hostelData: any;
   lblAddModalTitle = '';
-
-  constructor(private service: CommonService, private spinner: NgxSpinnerService) { }
+  roomData: any;
+  hostelID: any;
+  roomID: any;
+  constructor(private service: CommonService, private spinner: NgxSpinnerService, 
+    @Inject(DOCUMENT) private document: Document) { }
 
   ngOnInit() {
     this.customerForm = new FormGroup({
@@ -27,6 +31,7 @@ export class CustomerInfoComponent implements OnInit {
         "0",
         Validators.required
       ),
+      roomID: new FormControl('0', Validators.required),
       _id: new FormControl(
         null
       ),
@@ -67,11 +72,12 @@ export class CustomerInfoComponent implements OnInit {
       )
     })
 
-    this.getCustomer();
+    //this.getCustomer();
     this.getHostel();
   }
 
   btnAddModal() {
+    this.document.body.classList.add('modal-open');
     this.customerForm.reset();
     this.customerForm.patchValue(
       {
@@ -85,50 +91,17 @@ export class CustomerInfoComponent implements OnInit {
   btnCloseModal() {
     this.modalAddUpdate = false;
     this.modalBackDrop = false;
+    this.document.body.classList.remove('modal-open');
   }
   addUpdateHostel() {
     if (this.customerForm.valid) {
-      var parameters = {};
-      if (this.customerForm.value._id) {
-        parameters = {
-          '_id': this.customerForm.value._id,
-          'hostelID': this.customerForm.value.hostelID,
-          'firstName': this.customerForm.value.firstName,
-          'lastName': this.customerForm.value.lastName,
-          'customerNo': this.customerForm.value.customerNo,
-          'fatherName': this.customerForm.value.fatherName,
-          'familyContactNo': this.customerForm.value.familyContactNo,
-          'rentAmount': this.customerForm.value.rentAmount,
-          'securityAmount': this.customerForm.value.securityAmount,
-          'modifiedDate': new Date(),
-          'checkInDate': this.customerForm.value.checkInDate,
-          'checkOutDate': this.customerForm.value.checkOutDate,
-          'isActive': true
-        }
-      }
-      else {
-        parameters = {
-          'hostelID': this.customerForm.value.hostelID,
-          'firstName': this.customerForm.value.firstName,
-          'lastName': this.customerForm.value.lastName,
-          'customerNo': this.customerForm.value.customerNo,
-          'fatherName': this.customerForm.value.fatherName,
-          'familyContactNo': this.customerForm.value.familyContactNo,
-          'rentAmount': this.customerForm.value.rentAmount,
-          'securityAmount': this.customerForm.value.securityAmount,
-          'createdDate': new Date(),
-          'checkInDate': this.customerForm.value.checkInDate,
-          'checkOutDate': this.customerForm.value.checkOutDate,
-          'isActive': true
-        }
-      }
       this.spinner.show();
-      this.service.Post('customer/addupdate', parameters).subscribe(
+      this.service.Post('customer/addupdate', this.customerForm.value).subscribe(
         (x: any) => {
           if (x.IsSuccess) {
             this.modalAddUpdate = false;
             this.modalBackDrop = false;
-            this.getCustomer();
+            this.getCustomer(this.roomID);
           }
           else {
             console.log("error occured");
@@ -140,10 +113,11 @@ export class CustomerInfoComponent implements OnInit {
 
     }
   }
-  getCustomer(id = '') {
+  getCustomer(roomID) {
     this.spinner.show();
     var parameters = {
-      'isActive': true
+      'isActive': true,
+      'roomID': roomID
     }
     this.service.Post('customer/get', parameters).subscribe(
       (x: any) => {
@@ -198,7 +172,7 @@ export class CustomerInfoComponent implements OnInit {
         if (x.IsSuccess) {
           this.modalDelete = false;
           this.modalBackDrop = false;
-          this.getCustomer();
+          this.getCustomer(this.roomID);
         }
         else {
           console.log("error occured");
@@ -208,7 +182,7 @@ export class CustomerInfoComponent implements OnInit {
     );
   }
 
-  getHostel(id = '') {
+  getHostel() {
     this.spinner.show();
     var parameters = {
       'isActive': true
@@ -217,6 +191,25 @@ export class CustomerInfoComponent implements OnInit {
       (x: any) => {
         if (x.IsSuccess) {
           this.hostelData = x.data;
+          this.spinner.hide();
+        }
+        else {
+          console.log("error occured");
+        }
+      }
+    );
+  }
+  getRoom(hostelID) {
+    this.spinner.show();
+    this.hostelID = hostelID;
+    var parameters = {
+      'isActive': true,
+      'hostelID': hostelID
+    }
+    this.service.Post('room/get', parameters).subscribe(
+      (x: any) => {
+        if (x.IsSuccess) {
+          this.roomData = x.data;
           this.spinner.hide();
         }
         else {

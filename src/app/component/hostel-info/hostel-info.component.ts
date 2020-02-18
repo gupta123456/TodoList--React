@@ -49,25 +49,8 @@ export class HostelInfoComponent implements OnInit {
 
   addUpdateHostel() {
     if (this.hostelForm.valid) {
-      var parameters = {};
-      if (this.hostelForm.value._id) {
-        parameters = {
-          '_id': this.hostelForm.value._id,
-          'name': this.hostelForm.value.name,
-          'modifiedDate': new Date(),
-          'isActive': true
-        }
-      }
-      else {
-        parameters = {
-          'name': this.hostelForm.value.name,
-          'createdDate': new Date(),
-          'isActive': true,
-          'modifiedDate': new Date()
-        }
-      }
       this.spinner.show();
-      this.service.Post('hostel/addupdate', parameters).subscribe(
+      this.service.Post('hostel/addupdate', this.hostelForm.value).subscribe(
         (x: any) => {
           if (x.IsSuccess) {
             this.modalAddUpdate = false;

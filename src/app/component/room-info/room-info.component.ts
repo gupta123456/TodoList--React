@@ -11,26 +11,132 @@ import { CommonService } from '../../common/common.service';
 export class RoomInfoComponent implements OnInit {
 
   form: any;
-  hostelData: any;
+  roomData: any;
   modalAddUpdate = false;
   modalDelete = false;
   modalBackDrop = false;
   deleteId: any;
   lblAddModalTitle = '';
-
+  hostelData: any;
+  hostelID: any;
   constructor(private service: CommonService, private spinner: NgxSpinnerService, private fb: FormBuilder) { }
 
   ngOnInit() {
     this.form = this.fb.group({
-      _id:[null],
-      hostelID: [null, Validators.required],
+      _id: [null],
+      hostelID: ['0', Validators.required],
       name: [null, Validators.required]
     })
+    //this.getRoom();
+    this.getHostel();
   }
+
   btnAddModal() {
     this.form.reset();
     this.modalAddUpdate = true;
     this.modalBackDrop = true;
     this.lblAddModalTitle = 'Add';
+  }
+
+  getRoom(hostelID) {
+    this.spinner.show();
+    this.hostelID = hostelID;
+    var parameters = {
+      'isActive': true,
+      'hostelID': hostelID
+    }
+    this.service.Post('room/get', parameters).subscribe(
+      (x: any) => {
+        if (x.IsSuccess) {
+          this.roomData = x.data;
+          this.spinner.hide();
+        }
+        else {
+          console.log("error occured");
+        }
+      }
+    );
+  }
+  getHostel(id = '') {
+    this.spinner.show();
+    var parameters = {
+      'isActive': true
+    }
+    this.service.Post('hostel/get', parameters).subscribe(
+      (x: any) => {
+        if (x.IsSuccess) {
+          this.hostelData = x.data;
+          this.spinner.hide();
+        }
+        else {
+          console.log("error occured");
+        }
+      }
+    );
+  }
+  btnCloseModal() {
+    this.modalAddUpdate = false;
+    this.modalBackDrop = false;
+  }
+  addUpdateRoom() {
+    debugger
+    if (this.form.valid) {
+      this.spinner.show();
+      this.service.Post('room/addUpdate', this.form.value).subscribe(
+        (x: any) => {
+          if (x.IsSuccess) {
+            this.modalAddUpdate = false;
+            this.modalBackDrop = false;
+            this.getRoom(this.hostelID );
+          }
+          else {
+            console.log("error occured");
+          }
+        }
+      );
+    }
+    else {
+
+    }
+  }
+  editModel(item) {
+    this.modalAddUpdate = true;
+    this.modalBackDrop = true;
+    this.lblAddModalTitle = 'Update';
+    this.form.setValue(
+      {
+        'hostelID': item.hostelID,
+        'name': item.name,
+        '_id': item._id
+      }
+    )
+  }
+  deleteModal(item) {
+    this.deleteId = item._id;
+    this.modalDelete = true;
+    this.modalBackDrop = true;
+  }
+  btnCloseDeleteModal() {
+    this.modalDelete = false;
+    this.modalBackDrop = false;
+  }
+  deleteRoom(item) {
+    var parameters = {
+      '_id': this.deleteId
+    }
+    this.spinner.show();
+    this.service.Post('room/delete', parameters).subscribe(
+      (x: any) => {
+        if (x.IsSuccess) {
+          this.modalDelete = false;
+          this.modalBackDrop = false;
+          this.getRoom(this.hostelID );
+        }
+        else {
+          console.log("error occured");
+          this.spinner.hide();
+        }
+      }
+    );
   }
 }
