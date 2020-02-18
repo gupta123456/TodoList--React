@@ -20,6 +20,7 @@ export class RentInfoComponent implements OnInit {
   month: any;
   year: any;
   generateBillModal = false;
+  payBillModal = false;
   customerName = '';
   rentAmount = 0;
   previousDue = 0;
@@ -173,6 +174,19 @@ export class RentInfoComponent implements OnInit {
   }
   btnClosefinalBillModal() {
     this.finalBillModal = false;
+    this.modalBackDrop = false;
+  }
+
+  PayModal(item)
+  {
+    this.payBillModal = true;
+    this.modalBackDrop = true;
+    console.log(item);
+    this.customerName = item.firstName + ' ' + item.lastName;
+  }
+  btnClosePayBillModal()
+  {
+    this.payBillModal = false;
     this.modalBackDrop = false;
   }
 }
