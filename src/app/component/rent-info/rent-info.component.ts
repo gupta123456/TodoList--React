@@ -28,6 +28,7 @@ export class RentInfoComponent implements OnInit {
   electricityBill = 0;
   waterBill = 0;
   totalPayAmount = 0;
+  roomData:any;
   constructor(private service: CommonService, private spinner: NgxSpinnerService, private fb: FormBuilder) { }
 
   ngOnInit() {
@@ -100,10 +101,10 @@ export class RentInfoComponent implements OnInit {
     );
   }
 
-  getCustomer(hostelID) {
+  getCustomer(roomID) {
     this.spinner.show();
     var parameters = {
-      'hostelID': hostelID,
+      'roomID': roomID,
       'isActive': true
     }
     this.service.Post('customer/get', parameters).subscribe(
@@ -188,5 +189,24 @@ export class RentInfoComponent implements OnInit {
   {
     this.payBillModal = false;
     this.modalBackDrop = false;
+  }
+  getRoom(hostelID) {
+    this.spinner.show();
+    //this.hostelID = hostelID;
+    var parameters = {
+      'isActive': true,
+      'hostelID': hostelID
+    }
+    this.service.Post('room/get', parameters).subscribe(
+      (x: any) => {
+        if (x.IsSuccess) {
+          this.roomData = x.data;
+          this.spinner.hide();
+        }
+        else {
+          console.log("error occured");
+        }
+      }
+    );
   }
 }
