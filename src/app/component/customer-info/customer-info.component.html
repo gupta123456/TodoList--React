@@ -28,56 +28,33 @@
             </div>
             <!-- /.card-header -->
             <!-- form start -->
-            <div role="form">
-              <div class="card-body">
-                <div class="row">
-                  <div class="col-md-4">
-                    <div class="form-group">
-                      <label for="hostelID">Hostel</label>
-                      <select class="form-control" id="hostelID" (change)="getRoom($event.target.value)">
-                        <option value="0" selected>-- Select hostel --</option>
-                        <option *ngFor="let item of hostelData" value="{{item._id}}">
-                          {{item.name}}
-                        </option>
-                      </select>
-                    </div>
+            <div class="card-body header-border">
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="hostelID">Hostel</label>
+                    <select class="form-control" id="hostelID" (change)="getRoom($event.target.value)">
+                      <option value="0" selected>-- Select hostel --</option>
+                      <option *ngFor="let item of hostelData" value="{{item._id}}">
+                        {{item.name}}
+                      </option>
+                    </select>
                   </div>
-                  <div class="col-md-4">
-                    <div class="form-group">
-                      <label for="hostelID">Room</label>
-                      <select class="form-control" id="hostelID" (change)="getCustomer($event.target.value)">
-                        <option value="0" selected>-- Select room --</option>
-                        <option *ngFor="let item of roomData" value="{{item._id}}">
-                          {{item.name}}
-                        </option>
-                      </select>
-                    </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="hostelID">Room</label>
+                    <select class="form-control" id="hostelID" (change)="getCustomer($event.target.value)">
+                      <option value="0" selected>-- Select room --</option>
+                      <option *ngFor="let item of roomData" value="{{item._id}}">
+                        {{item.name}}
+                      </option>
+                    </select>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <!-- /.card -->
-
-        </div>
-        <!--/.col (right) -->
-      </div>
-      <!-- /.row -->
-    </div><!-- /.container-fluid -->
-  </section>
-  <!-- Main content -->
-  <section class="content">
-    <div class="container-fluid">
-      <div class="row">
-        <!-- left column -->
-        <div class="col-md-12">
-          <!-- general form elements -->
-          <div class="card card-primary">
-            <div class="card-header">
-              <h3 class="card-title">Customer</h3>
-            </div>
-            <!-- /.card-header -->
-            <div class="card">
+            <div class="card-body">
               <!-- /.card-header -->
               <div class="card-body">
                 <table class="table table-striped" [svData]="customerData" #sv="svDataTable" [svRowsOnPage]="10"
@@ -137,7 +114,6 @@
       <!-- /.row -->
     </div><!-- /.container-fluid -->
   </section>
-  <!-- /.content -->
 </div>
 
 <!-- Modals -->
@@ -162,7 +138,7 @@
                   <input type="hidden" formControlName='_id'>
                   <label for="hostelID">Hostel</label>
                   <select class="form-control" id="hostelID" formControlName='hostelID'
-                  (change)="getRoom($event.target.value)">
+                    (change)="getRoom($event.target.value)">
                     <option value="0" selected>-- Select hostel --</option>
                     <option *ngFor="let item of hostelData" value="{{item._id}}">
                       {{item.name}}
@@ -173,7 +149,7 @@
               <div class="col-md-6">
                 <div class="form-group">
                   <label for="roomID">Room</label>
-                  <select class="form-control" id="roomID"  formControlName='roomID'>
+                  <select class="form-control" id="roomID" formControlName='roomID'>
                     <option value="0" selected>-- Select room --</option>
                     <option *ngFor="let item of roomData" value="{{item._id}}">
                       {{item.name}}

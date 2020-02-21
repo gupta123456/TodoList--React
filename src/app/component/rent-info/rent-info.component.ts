@@ -28,7 +28,11 @@ export class RentInfoComponent implements OnInit {
   electricityBill = 0;
   waterBill = 0;
   totalPayAmount = 0;
-  roomData:any;
+  roomData: any;
+  payBill: any;
+  customerID: any;
+  billYear = 0;
+  billMonth = 0;
   constructor(private service: CommonService, private spinner: NgxSpinnerService, private fb: FormBuilder) { }
 
   ngOnInit() {
@@ -58,11 +62,16 @@ export class RentInfoComponent implements OnInit {
     })
     this.customerBillForm = this.fb.group({
       customerID: [null, Validators.required],
-      billMonth: ['0', Validators.required],
-      billYear: ['0', Validators.required],
+      billMonth: [{ value: 0, disabled: true }, Validators.required],
+      billYear: [{ value: 0, disabled: true }, Validators.required],
       electricityBill: [0],
       waterBill: [0],
       dueAmount: [0]
+    })
+    this.payBill = this.fb.group({
+      billMonth: [{ value: 0, disabled: true }, Validators.required],
+      billYear: [{ value: 0, disabled: true }, Validators.required],
+      paidAmount: [0]
     })
     this.getHostel('');
     this.getMonth();
@@ -75,13 +84,16 @@ export class RentInfoComponent implements OnInit {
     this.lblAddModalTitle = 'Add';
   }
   openBillModal(customer) {
-    this.generateBillModal = true;
-    this.modalBackDrop = true;
     this.customerName = customer.firstName + ' ' + customer.lastName;
     this.customerBillForm.patchValue({
-      customerID: customer._id
+      customerID: customer._id,
+      billMonth: this.billMonth,
+      billYear: this.billYear
     });
     this.rentAmount = customer.rentAmount;
+    this.getDueAmount();
+    this.generateBillModal = true;
+    this.modalBackDrop = true;
   }
   getHostel(id = '') {
     this.spinner.show();
@@ -149,20 +161,20 @@ export class RentInfoComponent implements OnInit {
     );
   }
   getDueAmount() {
-    var billMonth = this.customerBillForm.value.billMonth;
-    var billYear = this.customerBillForm.value.billYear;
-    if (billMonth != '0' && billYear != '0') {
+    var billMonth = this.billMonth;
+    var billYear = this.billYear;
+    if (billMonth != 0 && billYear != 0) {
       billYear = (billMonth == 1) ? billYear - 1 : billYear;
-      billMonth = (billMonth == 1) ? 12 : (billMonth - 1);
+      billMonth = (billMonth == 1) ? 12 : billMonth;
       var parameters = {
         billMonth: billMonth,
         billYear: billYear
       }
       this.spinner.show();
-      this.service.Post('rent/getDueAmount', parameters).subscribe(
+      this.service.Post('rent/getAmount', parameters).subscribe(
         (x: any) => {
           if (x.IsSuccess) {
-            this.previousDue = x.data[0].dueAmount;
+            this.previousDue = x.data[0].dueAmount == undefined ? 0 : x.data[0].dueAmount;
             this.spinner.hide();
             this.spinner.hide();
           }
@@ -178,15 +190,36 @@ export class RentInfoComponent implements OnInit {
     this.modalBackDrop = false;
   }
 
-  PayModal(item)
-  {
-    this.payBillModal = true;
-    this.modalBackDrop = true;
+  PayModal(item) {
+    this.payBill.patchValue({
+      billYear: this.billYear,
+      billMonth: this.billMonth
+    });
     console.log(item);
     this.customerName = item.firstName + ' ' + item.lastName;
+    this.customerID = item._id;
+    this.spinner.show();
+    var parameters = {
+      customerID: item._id,
+      billYear: this.billYear,
+      billMonth: this.billMonth
+    }
+    this.service.Post('rent/getAmount', parameters).subscribe(
+      (x: any) => {
+        if (x.IsSuccess) {
+          this.totalPayAmount = x.data[0].paidAmount + x.data[0].electricityBill + x.data[0].waterBill;
+          this.payBillModal = true;
+          this.modalBackDrop = true;
+          this.spinner.hide();
+        }
+        else {
+          console.log("error occured");
+          this.spinner.hide();
+        }
+      }
+    );
   }
-  btnClosePayBillModal()
-  {
+  btnClosePayBillModal() {
     this.payBillModal = false;
     this.modalBackDrop = false;
   }
@@ -198,6 +231,21 @@ export class RentInfoComponent implements OnInit {
       'hostelID': hostelID
     }
     this.service.Post('room/get', parameters).subscribe(
+      (x: any) => {
+        if (x.IsSuccess) {
+          this.roomData = x.data;
+          this.spinner.hide();
+        }
+        else {
+          console.log("error occured");
+        }
+      }
+    );
+  }
+  billPayment() {
+    this.payBill.value.customerID = this.customerID;
+    this.spinner.show();
+    this.service.Post('rent/payRent', this.payBill.value).subscribe(
       (x: any) => {
         if (x.IsSuccess) {
           this.roomData = x.data;

@@ -8,7 +8,7 @@ import { CustomerInfoComponent } from './component/customer-info/customer-info.c
 import { HostelInfoComponent } from './component/hostel-info/hostel-info.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatInputModule, MatTableModule, MatDatepickerModule,MatNativeDateModule  } from '@angular/material';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { NgxSpinnerModule } from "ngx-spinner";
 import { DataTableModule } from 'ng-angular8-datatable';
@@ -36,7 +36,8 @@ import { RoomInfoComponent } from './component/room-info/room-info.component';
     NgxSpinnerModule,
     DataTableModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
