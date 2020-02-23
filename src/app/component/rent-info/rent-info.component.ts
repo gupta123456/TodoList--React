@@ -62,15 +62,15 @@ export class RentInfoComponent implements OnInit {
     })
     this.customerBillForm = this.fb.group({
       customerID: [null, Validators.required],
-      billMonth: [{ value: 0, disabled: true }, Validators.required],
-      billYear: [{ value: 0, disabled: true }, Validators.required],
+      billMonth: [{ value: 0 }, Validators.required],
+      billYear: [{ value: 0 }, Validators.required],
       electricityBill: [0],
       waterBill: [0],
       dueAmount: [0]
     })
     this.payBill = this.fb.group({
-      billMonth: [{ value: 0, disabled: true }, Validators.required],
-      billYear: [{ value: 0, disabled: true }, Validators.required],
+      billMonth: [{ value: 0 }, Validators.required],
+      billYear: [{ value: 0 }, Validators.required],
       paidAmount: [0]
     })
     this.getHostel('');
@@ -91,7 +91,7 @@ export class RentInfoComponent implements OnInit {
       billYear: this.billYear
     });
     this.rentAmount = customer.rentAmount;
-    this.getDueAmount();
+    this.getDueAmount(customer);
     this.generateBillModal = true;
     this.modalBackDrop = true;
   }
@@ -160,29 +160,33 @@ export class RentInfoComponent implements OnInit {
       }
     );
   }
-  getDueAmount() {
-    var billMonth = this.billMonth;
-    var billYear = this.billYear;
-    if (billMonth != 0 && billYear != 0) {
-      billYear = (billMonth == 1) ? billYear - 1 : billYear;
-      billMonth = (billMonth == 1) ? 12 : billMonth;
-      var parameters = {
-        billMonth: billMonth,
-        billYear: billYear
-      }
-      this.spinner.show();
-      this.service.Post('rent/getAmount', parameters).subscribe(
-        (x: any) => {
-          if (x.IsSuccess) {
-            this.previousDue = x.data[0].dueAmount == undefined ? 0 : x.data[0].dueAmount;
-            this.spinner.hide();
-            this.spinner.hide();
-          }
-          else {
-            console.log("error occured");
-          }
+  getDueAmount(customer) {
+    if (customer != undefined) {
+      var billMonth = this.billMonth;
+      var billYear = this.billYear;
+      if (billMonth != 0 && billYear != 0) {
+        billYear = (billMonth == 1) ? billYear - 1 : billYear;
+        billMonth = (billMonth == 1) ? 12 : billMonth - 1;
+        var parameters = {
+          billMonth: billMonth,
+          billYear: billYear,
+          customerID: customer._id
         }
-      );
+        this.spinner.show();
+        this.service.Post('rent/getAmount', parameters).subscribe(
+          (x: any) => {
+            if (x.IsSuccess) {
+              if (x.data.length > 0) {
+                this.previousDue = x.data[0].dueAmount == undefined ? 0 : x.data[0].dueAmount;
+              }
+              this.spinner.hide();
+            }
+            else {
+              console.log("error occured");
+            }
+          }
+        );
+      }
     }
   }
   btnClosefinalBillModal() {
@@ -193,7 +197,8 @@ export class RentInfoComponent implements OnInit {
   PayModal(item) {
     this.payBill.patchValue({
       billYear: this.billYear,
-      billMonth: this.billMonth
+      billMonth: this.billMonth,
+      paidAmount: 0
     });
     console.log(item);
     this.customerName = item.firstName + ' ' + item.lastName;
@@ -204,12 +209,14 @@ export class RentInfoComponent implements OnInit {
       billYear: this.billYear,
       billMonth: this.billMonth
     }
-    this.service.Post('rent/getAmount', parameters).subscribe(
+    this.service.Post('rent/getTotalPaymentAmount', parameters).subscribe(
       (x: any) => {
         if (x.IsSuccess) {
-          this.totalPayAmount = x.data[0].paidAmount + x.data[0].electricityBill + x.data[0].waterBill;
-          this.payBillModal = true;
-          this.modalBackDrop = true;
+          if (x.data) {
+            this.totalPayAmount = item.rentAmount + x.data.electricityBill + x.data.waterBill + x.data.dueAmount;
+            this.payBillModal = true;
+            this.modalBackDrop = true;
+          }
           this.spinner.hide();
         }
         else {
@@ -244,11 +251,18 @@ export class RentInfoComponent implements OnInit {
   }
   billPayment() {
     this.payBill.value.customerID = this.customerID;
+    var parameters = {
+      billYear: this.payBill.value.billYear,
+      billMonth: this.payBill.value.billMonth,
+      customerID: this.payBill.value.customerID,
+      paidAmount: this.payBill.value.paidAmount,
+      dueAmount: this.totalPayAmount - this.payBill.value.paidAmount
+    }
     this.spinner.show();
-    this.service.Post('rent/payRent', this.payBill.value).subscribe(
+    this.service.Post('rent/payRent', parameters).subscribe(
       (x: any) => {
         if (x.IsSuccess) {
-          this.roomData = x.data;
+          this.btnClosePayBillModal();
           this.spinner.hide();
         }
         else {
@@ -256,5 +270,8 @@ export class RentInfoComponent implements OnInit {
         }
       }
     );
+  }
+  getDueDetail(value){
+alert(value)
   }
 }

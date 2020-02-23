@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { NgxSpinnerService } from "ngx-spinner";
 import { CommonService } from '../../common/common.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-room-info',
@@ -18,8 +19,9 @@ export class RoomInfoComponent implements OnInit {
   deleteId: any;
   lblAddModalTitle = '';
   hostelData: any;
-  hostelID: any;
-  constructor(private service: CommonService, private spinner: NgxSpinnerService, private fb: FormBuilder) { }
+  hostelID = '0';
+  constructor(private service: CommonService, private spinner: NgxSpinnerService, private fb: FormBuilder
+    , private toastr: ToastrService) { }
 
   ngOnInit() {
     this.form = this.fb.group({
@@ -33,6 +35,9 @@ export class RoomInfoComponent implements OnInit {
 
   btnAddModal() {
     this.form.reset();
+    this.form.patchValue({
+      hostelID: this.hostelID
+    })
     this.modalAddUpdate = true;
     this.modalBackDrop = true;
     this.lblAddModalTitle = 'Add';
@@ -77,6 +82,7 @@ export class RoomInfoComponent implements OnInit {
   btnCloseModal() {
     this.modalAddUpdate = false;
     this.modalBackDrop = false;
+    this.getRoom(this.hostelID);
   }
   addUpdateRoom() {
     debugger
@@ -84,10 +90,16 @@ export class RoomInfoComponent implements OnInit {
       this.spinner.show();
       this.service.Post('room/addUpdate', this.form.value).subscribe(
         (x: any) => {
+          this.spinner.hide();
           if (x.IsSuccess) {
-            this.modalAddUpdate = false;
-            this.modalBackDrop = false;
-            this.getRoom(this.hostelID );
+            if (this.form.value._id)
+              this.toastr.success('Updated successfully!', 'Room');
+            else {
+              this.toastr.success('Added successfully!', 'Room');
+              this.form.patchValue({
+                name: null
+              })
+            }
           }
           else {
             console.log("error occured");
@@ -130,7 +142,8 @@ export class RoomInfoComponent implements OnInit {
         if (x.IsSuccess) {
           this.modalDelete = false;
           this.modalBackDrop = false;
-          this.getRoom(this.hostelID );
+          this.toastr.success('Deleted successfully!', 'Room');
+          this.getRoom(this.hostelID);
         }
         else {
           console.log("error occured");

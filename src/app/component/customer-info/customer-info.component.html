@@ -4,7 +4,7 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1>General Form</h1>
+          <h1>Customer</h1>
         </div>
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
@@ -33,7 +33,8 @@
                 <div class="col-md-4">
                   <div class="form-group">
                     <label for="hostelID">Hostel</label>
-                    <select class="form-control" id="hostelID" (change)="getRoom($event.target.value)">
+                    <select class="form-control" id="hostelID" (change)="getRoom($event.target.value)"
+                      [(ngModel)]="hostelID">
                       <option value="0" selected>-- Select hostel --</option>
                       <option *ngFor="let item of hostelData" value="{{item._id}}">
                         {{item.name}}
@@ -44,7 +45,8 @@
                 <div class="col-md-4">
                   <div class="form-group">
                     <label for="hostelID">Room</label>
-                    <select class="form-control" id="hostelID" (change)="getCustomer($event.target.value)">
+                    <select class="form-control" id="roomID" (change)="getCustomer($event.target.value)"
+                      [(ngModel)]="roomID">
                       <option value="0" selected>-- Select room --</option>
                       <option *ngFor="let item of roomData" value="{{item._id}}">
                         {{item.name}}
@@ -55,56 +57,53 @@
               </div>
             </div>
             <div class="card-body">
-              <!-- /.card-header -->
-              <div class="card-body">
-                <table class="table table-striped" [svData]="customerData" #sv="svDataTable" [svRowsOnPage]="10"
-                  svSortOrder="asc">
-                  <thead>
-                    <tr>
-                      <th>S.No.</th>
-                      <th>Name</th>
-                      <th>Contact Number</th>
-                      <th>Father Name</th>
-                      <th>Family Number</th>
-                      <th>Created Date</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let item of sv.data; let i = index">
-                      <td>{{i+1}}</td>
-                      <td>{{ item.firstName + ' '+ item.lastName }}</td>
-                      <td>{{ item.customerNo }}</td>
-                      <td>{{ item.fatherName }}</td>
-                      <td>{{ item.familyContactNo }}</td>
-                      <td>{{ item.createdDate | date :'dd-MM-yyyy' }}</td>
-                      <td>
-                        <i class="fa fa-edit" title="Edit" (click)="editCustomer(item)"></i>
-                        <i class="fa fa-trash" data-toggle="modal" (click)="deleteModal(item)"></i>
-                      </td>
-                    </tr>
-                    <tr *ngIf="!customerData">
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td>No data available</td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                  </tbody>
-                  <tfoot>
-                    <tr>
-                      <td colspan="4">
-                        <sv-bootstrap-paginator [rowsOnPageSet]="[10, 25]">
-                        </sv-bootstrap-paginator>
-                      </td>
-                    </tr>
-                  </tfoot>
-                </table>
-              </div>
-              <!-- /.card-body -->
+              <table class="table table-striped" [svData]="customerData" #sv="svDataTable" [svRowsOnPage]="10"
+                svSortOrder="asc">
+                <thead>
+                  <tr>
+                    <th>S.No.</th>
+                    <th>Name</th>
+                    <th>Contact Number</th>
+                    <th>Father Name</th>
+                    <th>Family Number</th>
+                    <th>Created Date</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of sv.data; let i = index">
+                    <td>{{i+1}}</td>
+                    <td>{{ item.firstName + ' '+ item.lastName }}</td>
+                    <td>{{ item.customerNo }}</td>
+                    <td>{{ item.fatherName }}</td>
+                    <td>{{ item.familyContactNo }}</td>
+                    <td>{{ item.createdDate | date :'dd-MM-yyyy' }}</td>
+                    <td>
+                      <i class="fa fa-edit" title="Edit" (click)="editCustomer(item)"></i>
+                      <i class="fa fa-trash" data-toggle="modal" (click)="deleteModal(item)"></i>
+                    </td>
+                  </tr>
+                  <tr *ngIf="!customerData || customerData.length<1">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>No data available</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="4">
+                      <sv-bootstrap-paginator [rowsOnPageSet]="[10, 25]">
+                      </sv-bootstrap-paginator>
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
             </div>
+            <!-- /.card-body -->
           </div>
           <!-- /.card -->
 

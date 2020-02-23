@@ -3,6 +3,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { CommonService } from '../../common/common.service';
 import { NgxSpinnerService } from "ngx-spinner";
 import { DOCUMENT } from '@angular/common';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-customer-info',
@@ -20,10 +21,10 @@ export class CustomerInfoComponent implements OnInit {
   hostelData: any;
   lblAddModalTitle = '';
   roomData: any;
-  hostelID: any;
-  roomID: any;
-  constructor(private service: CommonService, private spinner: NgxSpinnerService, 
-    @Inject(DOCUMENT) private document: Document) { }
+  hostelID = '0';
+  roomID = '0';
+  constructor(private service: CommonService, private spinner: NgxSpinnerService,
+    @Inject(DOCUMENT) private document: Document, private toastr: ToastrService) { }
 
   ngOnInit() {
     this.customerForm = new FormGroup({
@@ -81,7 +82,8 @@ export class CustomerInfoComponent implements OnInit {
     this.customerForm.reset();
     this.customerForm.patchValue(
       {
-        hostelId: "0"
+        hostelID: this.hostelID,
+        roomID: this.roomID
       }
     )
     this.modalAddUpdate = true;
@@ -89,6 +91,7 @@ export class CustomerInfoComponent implements OnInit {
     this.lblAddModalTitle = 'Add';
   }
   btnCloseModal() {
+    this.getCustomer(this.roomID);
     this.modalAddUpdate = false;
     this.modalBackDrop = false;
     this.document.body.classList.remove('modal-open');
@@ -98,10 +101,21 @@ export class CustomerInfoComponent implements OnInit {
       this.spinner.show();
       this.service.Post('customer/addupdate', this.customerForm.value).subscribe(
         (x: any) => {
+          this.spinner.hide();
           if (x.IsSuccess) {
-            this.modalAddUpdate = false;
-            this.modalBackDrop = false;
-            this.getCustomer(this.roomID);
+            if (this.customerForm.value._id)
+              this.toastr.success('Updated successfully!', 'Customer');
+            else {
+              this.toastr.success('Added successfully!', 'Customer');
+              this.customerForm.reset();
+              this.customerForm.patchValue({
+                hostelID: this.hostelID,
+                roomID: this.roomID
+              })
+            }
+            // this.modalAddUpdate = false;
+            // this.modalBackDrop = false;
+            // this.getCustomer(this.roomID);
           }
           else {
             console.log("error occured");
@@ -136,10 +150,11 @@ export class CustomerInfoComponent implements OnInit {
     this.modalBackDrop = true;
     this.lblAddModalTitle = 'Update';
     debugger
-    this.customerForm.setValue(
+    this.customerForm.patchValue(
       {
         '_id': item._id,
         'hostelID': item.hostelID,
+        'roomID': item.roomID,
         'firstName': item.firstName,
         'lastName': item.lastName,
         'customerNo': item.customerNo,
@@ -173,6 +188,7 @@ export class CustomerInfoComponent implements OnInit {
           this.modalDelete = false;
           this.modalBackDrop = false;
           this.getCustomer(this.roomID);
+          this.toastr.success('Deleted successfully!', 'Customer');
         }
         else {
           console.log("error occured");

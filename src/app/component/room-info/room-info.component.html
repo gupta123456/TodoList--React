@@ -4,7 +4,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>General Form</h1>
+                    <h1>Room</h1>
                 </div>
                 <div class="col-sm-6">
                     <div class="breadcrumb float-sm-right">
@@ -33,7 +33,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="hostelID">Hostel</label>
-                                            <select class="form-control" id="hostelID"
+                                            <select class="form-control" id="hostelID" [(ngModel)]="hostelID"
                                                 (change)="getRoom($event.target.value)">
                                                 <option value="0" selected>-- Select hostel --</option>
                                                 <option *ngFor="let item of hostelData" value="{{item._id}}">
@@ -67,7 +67,7 @@
                                             <i class="fa fa-trash" data-toggle="modal" (click)="deleteModal(item)"></i>
                                         </td>
                                     </tr>
-                                    <tr *ngIf="!roomData">
+                                    <tr *ngIf="!roomData || roomData.length<1">
                                         <td></td>
                                         <td></td>
                                         <td>No data available</td>
@@ -136,7 +136,7 @@
                 </form>
             </div>
             <div class="modal-footer justify-content-between admin-modal">
-                <button type="button" [disabled]="!form.valid || form.hostelID=='0'"
+                <button type="button" [disabled]="!form.valid || form.value.hostelID=='0'"
                     class="btn btn-primary modal-button" (click)="addUpdateRoom()">Save changes</button>
             </div>
         </div>

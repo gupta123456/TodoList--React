@@ -1,22 +1,4 @@
 <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1>General Form</h1>
-                </div>
-                <!-- <div class="col-sm-6">
-                    <div class="breadcrumb float-sm-right">
-                        <button type="button" class="btn btn-primary" (click)="btnAddModal()" data-toggle="modal">
-                            Add <i class="fa fa-plus"></i>
-                        </button>
-                    </div>
-                </div> -->
-            </div>
-        </div><!-- /.container-fluid -->
-    </section>
-
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
@@ -58,13 +40,6 @@
                                         </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <div class="form-check">
-                                            <!-- <label for="billDue">Due</label> -->
-                                            <label class="form-check-label" for="exampleCheck1">Due</label>
-                                            <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="billMonth">Bill month</label>
                                             <select class="form-control" id="billMonth" [(ngModel)]="billMonth" name="billMonth">
@@ -86,7 +61,12 @@
                                             </select>
                                         </div>
                                     </div>
-
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="chkDue">Due</label>
+                                            <input type="checkbox" class="form-check-input" id="chkDue" (change)="getDueDetail($event.target.checked)">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </form>
@@ -171,7 +151,7 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label for="billMonth">Month</label>
-                                            <select class="form-control" id="billMonth" formControlName='billMonth' 
+                                            <select class="form-control" id="billMonth" formControlName='billMonth' disabled
                                                 (ngModelChange)="getDueAmount()">
                                                 <option value="0" selected>-- Select --</option>
                                                 <option *ngFor="let item of month; let i = index" [ngValue]="i+1">
@@ -181,7 +161,7 @@
                                         </div>
                                         <div class="col-md-6">
                                             <label for="billYear">Year</label>
-                                            <select class="form-control" id="billYear" formControlName='billYear' 
+                                            <select class="form-control" id="billYear" formControlName='billYear' disabled
                                                 (ngModelChange)="getDueAmount()">
                                                 <option value="0" selected>-- Select --</option>
                                                 <option *ngFor="let item of year" [ngValue]="item">
@@ -319,7 +299,7 @@
                                     <label for="billMonth">Month</label>
                                 </div>
                                 <div class="col-md-9">
-                                    <select class="form-control" id="BillMonth" formControlName='billMonth'>
+                                    <select class="form-control" id="BillMonth" formControlName='billMonth' disabled>
                                         <option value="0" selected>-- Select --</option>
                                         <option *ngFor="let item of month; let i = index" [ngValue]="i+1">
                                             {{item}}
@@ -331,7 +311,7 @@
                                     <label for="billYear">Year</label>
                                 </div>
                                 <div class="col-md-9">
-                                    <select class="form-control" id="billYear" formControlName='billYear'>
+                                    <select class="form-control" id="billYear" formControlName='billYear' disabled>
                                         <option value="0" selected>-- Select --</option>
                                         <option *ngFor="let item of year" [ngValue]="item">
                                             {{item}}

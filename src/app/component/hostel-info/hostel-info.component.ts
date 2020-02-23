@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { CommonService } from '../../common/common.service';
 import { NgxSpinnerService } from "ngx-spinner";
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-hostel-info',
@@ -18,7 +19,7 @@ export class HostelInfoComponent implements OnInit {
   deleteId: any;
   lblAddModalTitle = '';
 
-  constructor(private service: CommonService, private spinner: NgxSpinnerService) { }
+  constructor(private service: CommonService, private spinner: NgxSpinnerService, private toastr: ToastrService) { }
 
   ngOnInit() {
     this.hostelForm = new FormGroup({
@@ -44,6 +45,7 @@ export class HostelInfoComponent implements OnInit {
   btnCloseModal() {
     this.modalAddUpdate = false;
     this.modalBackDrop = false;
+    this.getHostel();
   }
 
 
@@ -52,10 +54,14 @@ export class HostelInfoComponent implements OnInit {
       this.spinner.show();
       this.service.Post('hostel/addupdate', this.hostelForm.value).subscribe(
         (x: any) => {
+          this.spinner.hide();
           if (x.IsSuccess) {
-            this.modalAddUpdate = false;
-            this.modalBackDrop = false;
-            this.getHostel();
+            if (this.hostelForm.value._id)
+              this.toastr.success('Updated successfully!', 'Hostel');
+            else{              
+              this.toastr.success('Added successfully!', 'Hostel');
+              this.hostelForm.reset();
+            }
           }
           else {
             console.log("error occured");
@@ -96,6 +102,7 @@ export class HostelInfoComponent implements OnInit {
         if (x.IsSuccess) {
           this.modalDelete = false;
           this.modalBackDrop = false;
+          this.toastr.success('Deleted successfully!', 'Hostel');
           this.getHostel();
         }
         else {
