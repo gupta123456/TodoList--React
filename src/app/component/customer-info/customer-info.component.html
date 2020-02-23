@@ -135,7 +135,7 @@
                 <div class="form-group">
                   <!-- input value for customer -->
                   <input type="hidden" formControlName='_id'>
-                  <label for="hostelID">Hostel</label>
+                  <label for="hostelID">Hostel</label><span>*</span>
                   <select class="form-control" id="hostelID" formControlName='hostelID'
                     (change)="getRoom($event.target.value)">
                     <option value="0" selected>-- Select hostel --</option>
@@ -147,7 +147,7 @@
               </div>
               <div class="col-md-6">
                 <div class="form-group">
-                  <label for="roomID">Room</label>
+                  <label for="roomID">Room</label><span>*</span>
                   <select class="form-control" id="roomID" formControlName='roomID'>
                     <option value="0" selected>-- Select room --</option>
                     <option *ngFor="let item of roomData" value="{{item._id}}">
@@ -158,35 +158,35 @@
               </div>
               <div class="col-md-6">
                 <div class="form-group">
-                  <label for="firstName">First Name</label>
+                  <label for="firstName">First Name</label><span>*</span>
                   <input type="text" class="form-control" id="firstName" formControlName='firstName' name="firstName"
                     placeholder="Enter first name" autofocus autocomplete="off" maxlength="15">
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group">
-                  <label for="lastName">Last Name</label>
+                  <label for="lastName">Last Name</label><span>*</span>
                   <input type="text" class="form-control" id="lastName" formControlName='lastName' name="lastName"
                     placeholder="Enter last name" autofocus autocomplete="off" maxlength="15">
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group">
-                  <label for="customerNo">Contact number</label>
+                  <label for="customerNo">Contact number</label><span>*</span>
                   <input type="text" class="form-control" id="customerNo" formControlName='customerNo' name="customerNo"
                     placeholder="Enter contact Number" autofocus autocomplete="off" maxlength="10">
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group">
-                  <label for="fatherName">Father Name</label>
+                  <label for="fatherName">Father Name</label><span>*</span>
                   <input type="text" class="form-control" id="fatherName" formControlName='fatherName' name="fatherName"
                     placeholder="Enter father name" autofocus autocomplete="off" maxlength="50">
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group">
-                  <label for="familyContactNo">Family contact no</label>
+                  <label for="familyContactNo">Family contact no</label><span>*</span>
                   <input type="text" class="form-control" id="familyContactNo" formControlName='familyContactNo'
                     name="familyContactNo" placeholder="Enter family contact no" autofocus autocomplete="off"
                     maxlength="15">
@@ -194,14 +194,14 @@
               </div>
               <div class="col-md-6">
                 <div class="form-group">
-                  <label for="rentAmount">Rent per month</label>
+                  <label for="rentAmount">Rent per month</label><span>*</span>
                   <input type="number" class="form-control" id="rentAmount" formControlName='rentAmount'
                     name="rentAmount" placeholder="Enter room rent" autofocus autocomplete="off" maxlength="5">
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group">
-                  <label for="securityAmount">Security amount</label>
+                  <label for="securityAmount">Security amount</label><span>*</span>
                   <input type="number" class="form-control" id="securityAmount" formControlName='securityAmount'
                     name="securityAmount" placeholder="Enter security amount" autofocus autocomplete="off"
                     maxlength="5">
@@ -209,7 +209,7 @@
               </div>
               <div class="col-md-6">
                 <div class="form-group">
-                  <label for="checkInDate">Check-In Date</label>
+                  <label for="checkInDate">Check-In Date</label><span>*</span>
                   <input type="date" class="form-control" id="checkInDate" formControlName='checkInDate'>
                 </div>
               </div>
@@ -224,7 +224,7 @@
         </form>
       </div>
       <div class="modal-footer justify-content-between admin-modal">
-        <button type="button" [disabled]="!customerForm.valid" class="btn btn-primary modal-button"
+        <button type="button" [disabled]="!customerForm.valid || customerForm.hostelID.value==0 || customerForm.roomID.value=='0'"  class="btn btn-primary modal-button"
           (click)="addUpdateHostel()">Save changes</button>
       </div>
     </div>
@@ -246,7 +246,7 @@
         <p>Are you sure?</p>
       </div>
       <div class="modal-footer justify-content-between admin-modal">
-        <button type="button" class="btn btn-primary modal-button" (click)="confirmDelete()">Save changes</button>
+        <button type="button" class="btn btn-danger modal-button" (click)="confirmDelete()">Delete</button>
       </div>
     </div>
     <!-- /.modal-content -->

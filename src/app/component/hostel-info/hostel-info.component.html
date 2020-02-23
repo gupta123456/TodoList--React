@@ -102,7 +102,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="name">Name</label>
+                                    <label for="name">Name</label><span>*</span>
                                     <input type="text" class="form-control" id="name" formControlName='name' name="Name"
                                         placeholder="Enter hostel name" autofocus autocomplete="off" maxlength="15">
                                     <input type="hidden" formControlName='_id' />
@@ -135,7 +135,7 @@
                 <p>Are you sure?</p>
             </div>
             <div class="modal-footer justify-content-between admin-modal">
-                <button type="button" class="btn btn-primary modal-button" (click)="deleteHostel()">Save changes</button>
+                <button type="button" class="btn btn-danger modal-button" (click)="deleteHostel()">Delete</button>
             </div>
         </div>
         <!-- /.modal-content -->

@@ -115,7 +115,7 @@
                                 <div class="form-group">
                                     <!-- input value for customer -->
                                     <input type="hidden" formControlName='_id'>
-                                    <label for="hostelID">Hostel</label>
+                                    <label for="hostelID">Hostel</label><span>*</span>
                                     <select class="form-control" id="hostelID" formControlName='hostelID'>
                                         <option value='0' selected>-- Select hostel --</option>
                                         <option *ngFor="let item of hostelData" [ngValue]="item._id">
@@ -126,7 +126,7 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="name">Name</label>
+                                    <label for="name">Name</label><span>*</span>
                                     <input type="text" class="form-control" id="name" formControlName='name' name="Name"
                                         placeholder="Enter room name" autofocus autocomplete="off" maxlength="15">
                                 </div>
@@ -159,8 +159,7 @@
                 <p>Are you sure?</p>
             </div>
             <div class="modal-footer justify-content-between admin-modal">
-                <button type="button" class="btn btn-primary modal-button" (click)="deleteRoom()">Save
-                    changes</button>
+                <button type="button" class="btn btn-danger modal-button" (click)="deleteRoom()">Delete</button>
             </div>
         </div>
         <!-- /.modal-content -->
