@@ -1,4 +1,6 @@
 <div class="content-wrapper">
+    <section class="content-header">
+    </section>
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
@@ -12,7 +14,7 @@
                         </div>
                         <!-- /.card-header -->
                         <!-- form start -->
-                        <form role="form">
+                        <div role="form">
                             <div class="card-body header-border">
                                 <div class="row">
                                     <div class="col-md-4">
@@ -30,7 +32,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="roomID">Room</label>
-                                            <select class="form-control" id="roomID"
+                                            <select class="form-control" id="roomID" [(ngModel)]="roomID"
                                                 (change)="getCustomer($event.target.value)">
                                                 <option value="0" selected>-- Select Room --</option>
                                                 <option *ngFor="let item of roomData" value="{{item._id}}">
@@ -42,7 +44,8 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="billMonth">Bill month</label>
-                                            <select class="form-control" id="billMonth" [(ngModel)]="billMonth" name="billMonth">
+                                            <select class="form-control" id="billMonth" [(ngModel)]="billMonth"
+                                                name="billMonth">
                                                 <option value=0 selected>-- Select --</option>
                                                 <option *ngFor="let item of month; let i = index" [ngValue]="i+1">
                                                     {{item}}
@@ -53,7 +56,8 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="billYear">Bill year</label>
-                                            <select class="form-control" id="billYear" [(ngModel)]="billYear" name="billYear">
+                                            <select class="form-control" id="billYear" [(ngModel)]="billYear"
+                                                name="billYear">
                                                 <option value="0" selected>-- Select --</option>
                                                 <option *ngFor="let item of year" [ngValue]="item">
                                                     {{item}}
@@ -64,12 +68,13 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="chkDue">Due</label>
-                                            <input type="checkbox" class="form-check-input" id="chkDue" (change)="getDueDetail($event.target.checked)">
+                                            <input type="checkbox" class="form-check-input" id="chkDue"
+                                                (change)="getDueDetail($event.target.checked)">
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </form>
+                        </div>
                         <div class="card-body">
                             <table class="table table-striped" [svData]="customerData" #sv="svDataTable"
                                 [svRowsOnPage]="10" svSortOrder="asc">
@@ -81,16 +86,21 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr *ngFor="let item of sv.data; let i = index">
-                                        <td>{{i+1}}</td>
-                                        <td>{{ item.firstName +' '+ item.lastName }}</td>
-                                        <td>
-                                            <a href="javascript:void(0)" title="Generate Bill"
-                                                (click)="openBillModal(item)">GenerateBill</a>
-                                            <a href="javascript:void(0)" (click)="PayModal(item)">Pay</a>
-                                        </td>
-                                    </tr>
-                                    <tr *ngIf="!customerData || customerData.length<1">
+                                    <ng-container *ngIf="billYear!='0' && billMonth!='0'">
+                                        <tr *ngFor="let item of sv.data; let i = index">
+                                            <td>{{i+1}}</td>
+                                            <td>{{ item.firstName +' '+ item.lastName }}</td>
+                                            <td>
+                                                <button title="Generate Bill" (click)="openBillModal(item)"
+                                                    class="btn btn-primary rentButton">GenerateBill</button>
+                                                <button (click)="PayModal(item)"
+                                                    class="btn btn-primary rentButton">Pay</button>
+                                                <button (click)="viewBill(item)"
+                                                    class="btn btn-primary rentButton">View</button>
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+                                    <tr *ngIf="!customerData || customerData.length<1 || billYear=='0' || billMonth=='0'">
                                         <td></td>
                                         <td>No data available</td>
                                         <td></td>
@@ -151,8 +161,8 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label for="billMonth">Month</label>
-                                            <select class="form-control" id="billMonth" formControlName='billMonth' disabled
-                                                (ngModelChange)="getDueAmount()">
+                                            <select class="form-control" id="billMonth" formControlName='billMonth'
+                                                disabled (ngModelChange)="getDueAmount()">
                                                 <option value="0" selected>-- Select --</option>
                                                 <option *ngFor="let item of month; let i = index" [ngValue]="i+1">
                                                     {{item}}
@@ -161,8 +171,8 @@
                                         </div>
                                         <div class="col-md-6">
                                             <label for="billYear">Year</label>
-                                            <select class="form-control" id="billYear" formControlName='billYear' disabled
-                                                (ngModelChange)="getDueAmount()">
+                                            <select class="form-control" id="billYear" formControlName='billYear'
+                                                disabled (ngModelChange)="getDueAmount()">
                                                 <option value="0" selected>-- Select --</option>
                                                 <option *ngFor="let item of year" [ngValue]="item">
                                                     {{item}}
@@ -177,21 +187,29 @@
                                     <label for="electricityBill">Electricity Bill</label>
                                     <input type="number" class="form-control" id="electricityBill"
                                         formControlName='electricityBill' name="electricityBill"
-                                        placeholder="Enter security amount" autofocus autocomplete="off" maxlength="5">
+                                        placeholder="Enter security amount" autocomplete="off" maxlength="5">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="waterBill">Water Bill</label>
                                     <input type="number" class="form-control" id="waterBill" formControlName='waterBill'
-                                        name="waterBill" placeholder="Enter security amount" autofocus
-                                        autocomplete="off" maxlength="5">
+                                        name="waterBill" placeholder="Enter security amount" autocomplete="off"
+                                        maxlength="5">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Previous Due Amount</label>
                                     <label class="form-control">{{previousDue}}</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="comment">Comment</label>
+                                    <textarea type="tex" class="form-control" id="comment" formControlName='comment'
+                                        name="waterBill" placeholder="Enter comment" maxlength="200"
+                                        autocomplete="off"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -230,6 +248,19 @@
                                     <label class="form-control">{{customerName}}</label>
                                 </div>
                                 <div class="col-md-3">
+                                    <label for="hostelID">Contact No</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <label class="form-control">{{customerNo}}</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="hostelID">Rent Month</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <label class="form-control">{{this.monthName + ' '
+                                        + this.billYear}}</label>
+                                </div>
+                                <div class="col-md-3">
                                     <label for="hostelID">Rent Amount</label>
                                 </div>
                                 <div class="col-md-9">
@@ -258,6 +289,10 @@
                                 </div>
                                 <div class="col-md-9">
                                     <label class="form-control">{{totalPayAmount}}</label>
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="form-control"
+                                        style="height: auto;">{{customerBillForm.value.comment}}</label>
                                 </div>
                             </div>
                         </div>
@@ -329,7 +364,8 @@
                                     <label for="payAmount">PayAmount</label>
                                 </div>
                                 <div class="col-md-9">
-                                    <input type='number' class='form-control' id='payAmount' formControlName='paidAmount'>
+                                    <input type='number' class='form-control' id='payAmount'
+                                        formControlName='paidAmount'>
                                 </div>
                             </div>
                         </div>
@@ -338,7 +374,8 @@
                 <!-- </form> -->
             </div>
             <div class="modal-footer justify-content-between admin-modal">
-                <button type="button" class="btn btn-primary modal-button" [disabled]="!payBill.valid" (click)="billPayment()">Pay</button>
+                <button type="button" class="btn btn-primary modal-button" [disabled]="!payBill.valid"
+                    (click)="billPayment()">Pay</button>
             </div>
         </div>
         <!-- /.modal-content -->

@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { NgxSpinnerService } from "ngx-spinner";
 import { CommonService } from '../../common/common.service';
+import { DOCUMENT } from '@angular/common';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-rent-info',
@@ -33,7 +35,11 @@ export class RentInfoComponent implements OnInit {
   customerID: any;
   billYear = 0;
   billMonth = 0;
-  constructor(private service: CommonService, private spinner: NgxSpinnerService, private fb: FormBuilder) { }
+  customerNo: any;
+  monthName = '';
+  roomID = 0;
+  constructor(private service: CommonService, private spinner: NgxSpinnerService, private fb: FormBuilder,
+    @Inject(DOCUMENT) private document: Document, private toastr: ToastrService) { }
 
   ngOnInit() {
     this.rentForm = new FormGroup({
@@ -66,7 +72,8 @@ export class RentInfoComponent implements OnInit {
       billYear: [{ value: 0 }, Validators.required],
       electricityBill: [0],
       waterBill: [0],
-      dueAmount: [0]
+      dueAmount: [0],
+      comment: [null]
     })
     this.payBill = this.fb.group({
       billMonth: [{ value: 0 }, Validators.required],
@@ -77,23 +84,22 @@ export class RentInfoComponent implements OnInit {
     this.getMonth();
     this.getYear();
   }
-  btnAddModal() {
-    this.rentForm.reset();
-    this.modalAddUpdate = true;
-    this.modalBackDrop = true;
-    this.lblAddModalTitle = 'Add';
-  }
   openBillModal(customer) {
+    this.customerBillForm.reset();
     this.customerName = customer.firstName + ' ' + customer.lastName;
+    this.customerNo = customer.customerNo;
     this.customerBillForm.patchValue({
       customerID: customer._id,
       billMonth: this.billMonth,
-      billYear: this.billYear
+      billYear: this.billYear,
+      electricityBill: 0,
+      waterBill: 0
     });
     this.rentAmount = customer.rentAmount;
     this.getDueAmount(customer);
     this.generateBillModal = true;
     this.modalBackDrop = true;
+    this.document.body.classList.add('modal-open');
   }
   getHostel(id = '') {
     this.spinner.show();
@@ -134,6 +140,7 @@ export class RentInfoComponent implements OnInit {
   btnCloseModal() {
     this.generateBillModal = false;
     this.modalBackDrop = false;
+    this.document.body.classList.remove('modal-open');
   }
   getMonth() {
     this.month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -153,6 +160,7 @@ export class RentInfoComponent implements OnInit {
           this.totalPayAmount = this.rentAmount + this.electricityBill + this.waterBill + this.previousDue;
           this.generateBillModal = false;
           this.finalBillModal = true;
+          this.monthName = this.month[this.billMonth];
         }
         else {
           console.log("error occured");
@@ -192,6 +200,7 @@ export class RentInfoComponent implements OnInit {
   btnClosefinalBillModal() {
     this.finalBillModal = false;
     this.modalBackDrop = false;
+    this.document.body.classList.remove('modal-open');
   }
 
   PayModal(item) {
@@ -271,7 +280,36 @@ export class RentInfoComponent implements OnInit {
       }
     );
   }
-  getDueDetail(value){
-alert(value)
+  getDueDetail(value) {
+    alert(value)
+  }
+  viewBill(item) {
+    var parameters = {
+      billYear: this.billYear,
+      billMonth: this.billMonth,
+      customerID: item._id
+    }
+    this.spinner.show();
+    this.service.Post('rent/getAmount', parameters).subscribe(
+      (x: any) => {
+        if (x.IsSuccess && x.data.length > 0) {
+          this.electricityBill = x.data[0].electricityBill;
+          this.waterBill = x.data[0].waterBill;
+          this.totalPayAmount = item.rentAmount + x.data[0].electricityBill + x.data[0].waterBill + x.data[0].dueAmount;
+          this.finalBillModal = true;
+          this.monthName = this.month[this.billMonth];
+          this.modalBackDrop = true;
+          this.customerName = item.firstName + ' ' + item.lastName;
+          this.rentAmount = item.rentAmount;
+          this.customerNo = item.customerNo;
+          this.previousDue = x.data[0].dueAmount ==null ? 0 : x.data[0].dueAmount;
+          this.document.body.classList.add('modal-open');
+        }
+        else {          
+          this.toastr.warning('Please generate bill!', 'Bill generate');
+        }
+        this.spinner.hide();
+      }
+    );
   }
 }
