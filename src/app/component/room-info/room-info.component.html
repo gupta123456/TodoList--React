@@ -35,7 +35,7 @@
                                             <label for="hostelID">Hostel</label>
                                             <select class="form-control" id="hostelID" [(ngModel)]="hostelID"
                                                 (change)="getRoom($event.target.value)">
-                                                <option value="0" selected>-- Select hostel --</option>
+                                                <option value="0" disabled>-- Select hostel --</option>
                                                 <option *ngFor="let item of hostelData" value="{{item._id}}">
                                                     {{item.name}}
                                                 </option>
@@ -117,7 +117,7 @@
                                     <input type="hidden" formControlName='_id'>
                                     <label for="hostelID">Hostel</label><span>*</span>
                                     <select class="form-control" id="hostelID" formControlName='hostelID'>
-                                        <option value='0' selected>-- Select hostel --</option>
+                                        <option value='0' disabled>-- Select hostel --</option>
                                         <option *ngFor="let item of hostelData" [ngValue]="item._id">
                                             {{item.name}}
                                         </option>

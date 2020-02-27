@@ -35,7 +35,7 @@
                     <label for="hostelID">Hostel</label>
                     <select class="form-control" id="hostelID" (change)="getRoom($event.target.value)"
                       [(ngModel)]="hostelID">
-                      <option value="0" selected>-- Select hostel --</option>
+                      <option value="0" disabled>-- Select hostel --</option>
                       <option *ngFor="let item of hostelData" value="{{item._id}}">
                         {{item.name}}
                       </option>
@@ -47,7 +47,7 @@
                     <label for="hostelID">Room</label>
                     <select class="form-control" id="roomID" (change)="getCustomer($event.target.value)"
                       [(ngModel)]="roomID">
-                      <option value="0" selected>-- Select room --</option>
+                      <option value="0" disabled>-- Select room --</option>
                       <option *ngFor="let item of roomData" value="{{item._id}}">
                         {{item.name}}
                       </option>
@@ -138,7 +138,7 @@
                   <label for="hostelID">Hostel</label><span>*</span>
                   <select class="form-control" id="hostelID" formControlName='hostelID'
                     (change)="getRoom($event.target.value)">
-                    <option value="0" selected>-- Select hostel --</option>
+                    <option value="0" disabled>-- Select hostel --</option>
                     <option *ngFor="let item of hostelData" value="{{item._id}}">
                       {{item.name}}
                     </option>
@@ -149,7 +149,7 @@
                 <div class="form-group">
                   <label for="roomID">Room</label><span>*</span>
                   <select class="form-control" id="roomID" formControlName='roomID'>
-                    <option value="0" selected>-- Select room --</option>
+                    <option value="0" disabled>-- Select room --</option>
                     <option *ngFor="let item of roomData" value="{{item._id}}">
                       {{item.name}}
                     </option>

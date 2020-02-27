@@ -26,3 +26,6 @@ table i{
 .header-border{
     border-bottom: 1px solid rgba(0,0,0,.125);
 }
+select{
+    cursor: pointer;
+}

@@ -33,12 +33,13 @@ export class RentInfoComponent implements OnInit {
   roomData: any;
   payBill: any;
   customerID: any;
-  billYear = 0;
-  billMonth = 0;
+  selectedYear = 0;
+  selectedMonth = 0;
   customerNo: any;
   monthName = '';
-  roomID = 0;
-  chkDue = false;
+  selectedRoom = 0;
+  chkDueAmount = false;
+  monthForm: any;
   constructor(private service: CommonService, private spinner: NgxSpinnerService, private fb: FormBuilder,
     @Inject(DOCUMENT) private document: Document, private toastr: ToastrService) { }
 
@@ -81,6 +82,13 @@ export class RentInfoComponent implements OnInit {
       billYear: [{ value: 0 }, Validators.required],
       paidAmount: [0]
     })
+    this.monthForm = this.fb.group({
+      hostelID: [0, Validators.required],
+      roomID: [0, Validators.required],
+      billMonth: [0, Validators.required],
+      billYear: [0, Validators.required],
+      dueAmount: [false]
+    })
     this.getHostel('');
     this.getMonth();
     this.getYear();
@@ -91,8 +99,8 @@ export class RentInfoComponent implements OnInit {
     this.customerNo = customer.customerNo;
     this.customerBillForm.patchValue({
       customerID: customer._id,
-      billMonth: this.billMonth,
-      billYear: this.billYear,
+      billMonth: this.selectedMonth,
+      billYear: this.selectedYear,
       electricityBill: 0,
       waterBill: 0
     });
@@ -119,21 +127,24 @@ export class RentInfoComponent implements OnInit {
       }
     );
   }
-
   getCustomer() {
     this.spinner.show();
+    this.selectedMonth = this.monthForm.value.billMonth;
+    this.selectedYear = this.monthForm.value.billYear;
+    this.selectedRoom = this.monthForm.value.roomID;
+    this.chkDueAmount = this.monthForm.value.dueAmount
     var parameters = {
-      'roomID': this.roomID,
+      'roomID': this.selectedRoom,
       'isActive': true
     }
     this.service.Post('rent/getCustomerListByMonth', parameters).subscribe(
       (x: any) => {
         if (x.IsSuccess) {
           this.customerData = [];
-          if (this.chkDue) {
+          if (this.chkDueAmount) {
             for (var i = 0; i < x.data.length; i++) {
               if (x.data[i].rentInfo && x.data[i].rentInfo.length > 0) {
-                var selectedRentInfo = x.data[i].rentInfo.filter(x => x.billMonth == this.billMonth && x.billYear == this.billYear);
+                var selectedRentInfo = x.data[i].rentInfo.filter(x => x.billMonth == this.selectedMonth && x.billYear == this.selectedYear);
                 if (selectedRentInfo.length > 0 && selectedRentInfo[0].dueAmount > 0)
                   this.customerData.push(x.data[i]);
                 else if (selectedRentInfo.length < 1)
@@ -178,7 +189,8 @@ export class RentInfoComponent implements OnInit {
           this.totalPayAmount = this.rentAmount + this.electricityBill + this.waterBill + this.previousDue;
           this.generateBillModal = false;
           this.finalBillModal = true;
-          this.monthName = this.month[this.billMonth];
+          this.monthName = this.month[this.selectedMonth];
+          this.toastr.success('Bill generated successfully', 'Customer');
         }
         else {
           console.log("error occured");
@@ -188,8 +200,8 @@ export class RentInfoComponent implements OnInit {
   }
   getDueAmount(customer) {
     if (customer != undefined) {
-      var billMonth = this.billMonth;
-      var billYear = this.billYear;
+      var billMonth = this.selectedMonth;
+      var billYear = this.selectedYear;
       if (billMonth != 0 && billYear != 0) {
         billYear = (billMonth == 1) ? billYear - 1 : billYear;
         billMonth = (billMonth == 1) ? 12 : billMonth - 1;
@@ -220,11 +232,10 @@ export class RentInfoComponent implements OnInit {
     this.modalBackDrop = false;
     this.document.body.classList.remove('modal-open');
   }
-
   PayModal(item) {
     this.payBill.patchValue({
-      billYear: this.billYear,
-      billMonth: this.billMonth,
+      billYear: this.selectedYear,
+      billMonth: this.selectedMonth,
       paidAmount: 0
     });
     console.log(item);
@@ -233,8 +244,8 @@ export class RentInfoComponent implements OnInit {
     this.spinner.show();
     var parameters = {
       customerID: item._id,
-      billYear: this.billYear,
-      billMonth: this.billMonth
+      billYear: this.selectedYear,
+      billMonth: this.selectedMonth
     }
     this.service.Post('rent/getTotalPaymentAmount', parameters).subscribe(
       (x: any) => {
@@ -291,6 +302,7 @@ export class RentInfoComponent implements OnInit {
         if (x.IsSuccess) {
           this.btnClosePayBillModal();
           this.spinner.hide();
+          this.toastr.success('Bill paid successfully!', 'Customer');
         }
         else {
           console.log("error occured");
@@ -303,16 +315,16 @@ export class RentInfoComponent implements OnInit {
   }
   viewBill(item) {
     var parameters = {
-      billYear: this.billYear,
-      billMonth: this.billMonth,
+      billYear: this.selectedYear,
+      billMonth: this.selectedMonth,
       customerID: item._id
     }
     this.spinner.show();
     this.service.Post('rent/getAmount', parameters).subscribe(
       (x: any) => {
         if (x.IsSuccess && x.data.length > 0) {
-          var billYear = (this.billMonth == 1) ? this.billYear - 1 : this.billYear;
-          var billMonth = (this.billMonth == 1) ? 12 : this.billMonth - 1;
+          var billYear = (this.selectedMonth == 1) ? this.selectedYear - 1 : this.selectedYear;
+          var billMonth = (this.selectedMonth == 1) ? 12 : this.selectedMonth - 1;
           var selectedCustomer = this.customerData.filter(x => x._id == item._id);
           var getPreviousMonthAmount = selectedCustomer[0].rentInfo.filter(x => x.billMonth == billMonth && x.billYear == billYear);
           var previousDueAmount = getPreviousMonthAmount.length > 0 ? getPreviousMonthAmount[0].dueAmount : 0
@@ -320,7 +332,7 @@ export class RentInfoComponent implements OnInit {
           this.waterBill = x.data[0].waterBill;
           this.totalPayAmount = item.rentAmount + x.data[0].electricityBill + x.data[0].waterBill + previousDueAmount;
           this.finalBillModal = true;
-          this.monthName = this.month[this.billMonth];
+          this.monthName = this.month[this.selectedMonth];
           this.modalBackDrop = true;
           this.customerName = item.firstName + ' ' + item.lastName;
           this.rentAmount = item.rentAmount;
