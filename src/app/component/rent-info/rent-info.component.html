@@ -17,48 +17,47 @@
                         <div role="form">
                             <div class="card-body header-border">
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="hostelID">Hostel</label>
                                             <select class="form-control" id="hostelID"
                                                 (change)="getRoom($event.target.value)">
-                                                <option value="0" selected>-- Select hostel --</option>
+                                                <option value="0" disabled>-- Select hostel --</option>
                                                 <option *ngFor="let item of hostelData" value="{{item._id}}">
                                                     {{item.name}}
                                                 </option>
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="roomID">Room</label>
-                                            <select class="form-control" id="roomID" [(ngModel)]="roomID"
-                                                (change)="getCustomer($event.target.value)">
-                                                <option value="0" selected>-- Select Room --</option>
+                                            <select class="form-control" id="roomID" [(ngModel)]="roomID">
+                                                <option value="0" disabled>-- Select room --</option>
                                                 <option *ngFor="let item of roomData" value="{{item._id}}">
                                                     {{item.name}}
                                                 </option>
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="billMonth">Bill month</label>
                                             <select class="form-control" id="billMonth" [(ngModel)]="billMonth"
                                                 name="billMonth">
-                                                <option value=0 selected>-- Select --</option>
+                                                <option value=0 disabled>-- Select month--</option>
                                                 <option *ngFor="let item of month; let i = index" [ngValue]="i+1">
                                                     {{item}}
                                                 </option>
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="billYear">Bill year</label>
                                             <select class="form-control" id="billYear" [(ngModel)]="billYear"
                                                 name="billYear">
-                                                <option value="0" selected>-- Select --</option>
+                                                <option value="0" disabled>-- Select year--</option>
                                                 <option *ngFor="let item of year" [ngValue]="item">
                                                     {{item}}
                                                 </option>
@@ -69,7 +68,13 @@
                                         <div class="form-group">
                                             <label for="chkDue">Due</label>
                                             <input type="checkbox" class="form-check-input" id="chkDue"
-                                                (change)="getDueDetail($event.target.checked)">
+                                              (change)="chkDue=!chkDue">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <button class="btn btn-primary" [disabled]="billMonth==0 || billYear==0 || roomID==0"
+                                            (click)="getCustomer()"><i class="fa fa-search"></i> Search</button>
                                         </div>
                                     </div>
                                 </div>
@@ -100,7 +105,8 @@
                                             </td>
                                         </tr>
                                     </ng-container>
-                                    <tr *ngIf="!customerData || customerData.length<1 || billYear=='0' || billMonth=='0'">
+                                    <tr
+                                        *ngIf="!customerData || customerData.length<1 || billYear=='0' || billMonth=='0'">
                                         <td></td>
                                         <td>No data available</td>
                                         <td></td>
@@ -290,7 +296,7 @@
                                 <div class="col-md-9">
                                     <label class="form-control">{{totalPayAmount}}</label>
                                 </div>
-                                <div class="col-md-12">
+                                <div class="col-md-12" *ngIf="customerBillForm.value.comment">
                                     <label class="form-control"
                                         style="height: auto;">{{customerBillForm.value.comment}}</label>
                                 </div>

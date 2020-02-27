@@ -38,6 +38,7 @@ export class RentInfoComponent implements OnInit {
   customerNo: any;
   monthName = '';
   roomID = 0;
+  chkDue = false;
   constructor(private service: CommonService, private spinner: NgxSpinnerService, private fb: FormBuilder,
     @Inject(DOCUMENT) private document: Document, private toastr: ToastrService) { }
 
@@ -119,16 +120,33 @@ export class RentInfoComponent implements OnInit {
     );
   }
 
-  getCustomer(roomID) {
+  getCustomer() {
     this.spinner.show();
     var parameters = {
-      'roomID': roomID,
+      'roomID': this.roomID,
       'isActive': true
     }
-    this.service.Post('customer/get', parameters).subscribe(
+    this.service.Post('rent/getCustomerListByMonth', parameters).subscribe(
       (x: any) => {
         if (x.IsSuccess) {
-          this.customerData = x.data;
+          this.customerData = [];
+          if (this.chkDue) {
+            for (var i = 0; i < x.data.length; i++) {
+              if (x.data[i].rentInfo && x.data[i].rentInfo.length > 0) {
+                var selectedRentInfo = x.data[i].rentInfo.filter(x => x.billMonth == this.billMonth && x.billYear == this.billYear);
+                if (selectedRentInfo.length > 0 && selectedRentInfo[0].dueAmount > 0)
+                  this.customerData.push(x.data[i]);
+                else if (selectedRentInfo.length < 1)
+                  this.customerData.push(x.data[i]);
+              }
+              else {
+                this.customerData.push(x.data[i]);
+              }
+            }
+          }
+          else {
+            this.customerData = x.data;
+          }
           this.spinner.hide();
         }
         else {
@@ -293,19 +311,24 @@ export class RentInfoComponent implements OnInit {
     this.service.Post('rent/getAmount', parameters).subscribe(
       (x: any) => {
         if (x.IsSuccess && x.data.length > 0) {
+          var billYear = (this.billMonth == 1) ? this.billYear - 1 : this.billYear;
+          var billMonth = (this.billMonth == 1) ? 12 : this.billMonth - 1;
+          var selectedCustomer = this.customerData.filter(x => x._id == item._id);
+          var getPreviousMonthAmount = selectedCustomer[0].rentInfo.filter(x => x.billMonth == billMonth && x.billYear == billYear);
+          var previousDueAmount = getPreviousMonthAmount.length > 0 ? getPreviousMonthAmount[0].dueAmount : 0
           this.electricityBill = x.data[0].electricityBill;
           this.waterBill = x.data[0].waterBill;
-          this.totalPayAmount = item.rentAmount + x.data[0].electricityBill + x.data[0].waterBill + x.data[0].dueAmount;
+          this.totalPayAmount = item.rentAmount + x.data[0].electricityBill + x.data[0].waterBill + previousDueAmount;
           this.finalBillModal = true;
           this.monthName = this.month[this.billMonth];
           this.modalBackDrop = true;
           this.customerName = item.firstName + ' ' + item.lastName;
           this.rentAmount = item.rentAmount;
           this.customerNo = item.customerNo;
-          this.previousDue = x.data[0].dueAmount ==null ? 0 : x.data[0].dueAmount;
+          this.previousDue = previousDueAmount;
           this.document.body.classList.add('modal-open');
         }
-        else {          
+        else {
           this.toastr.warning('Please generate bill!', 'Bill generate');
         }
         this.spinner.hide();
