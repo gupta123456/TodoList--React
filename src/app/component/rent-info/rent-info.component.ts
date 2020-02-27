@@ -250,10 +250,13 @@ export class RentInfoComponent implements OnInit {
     this.service.Post('rent/getTotalPaymentAmount', parameters).subscribe(
       (x: any) => {
         if (x.IsSuccess) {
-          if (x.data) {
+          if (x.data && x.data.paidAmount != undefined) {
             this.totalPayAmount = item.rentAmount + x.data.electricityBill + x.data.waterBill + x.data.dueAmount;
             this.payBillModal = true;
             this.modalBackDrop = true;
+          }
+          else {
+            this.toastr.error('Please generate bill!', 'Bill generate');
           }
           this.spinner.hide();
         }
@@ -341,7 +344,7 @@ export class RentInfoComponent implements OnInit {
           this.document.body.classList.add('modal-open');
         }
         else {
-          this.toastr.warning('Please generate bill!', 'Bill generate');
+          this.toastr.error('Please generate bill!', 'Bill generate');
         }
         this.spinner.hide();
       }
