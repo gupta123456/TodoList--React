@@ -232,7 +232,7 @@ export class RentInfoComponent implements OnInit {
     this.modalBackDrop = false;
     this.document.body.classList.remove('modal-open');
   }
-  PayModal(item) {
+  payModal(item) {
     this.payBill.patchValue({
       billYear: this.selectedYear,
       billMonth: this.selectedMonth,
