@@ -250,7 +250,7 @@ export class RentInfoComponent implements OnInit {
     this.service.Post('rent/getTotalPaymentAmount', parameters).subscribe(
       (x: any) => {
         if (x.IsSuccess) {
-          if (x.data && x.data.paidAmount != undefined) {
+          if (x.data && x.data.isBillGenerated == true) {
             this.totalPayAmount = item.rentAmount + x.data.electricityBill + x.data.waterBill + x.data.dueAmount;
             this.payBillModal = true;
             this.modalBackDrop = true;
