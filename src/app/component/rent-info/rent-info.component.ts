@@ -180,7 +180,7 @@ export class RentInfoComponent implements OnInit {
           this.totalPayAmount = this.rentAmount + this.electricityBill + this.waterBill + this.previousDue;
           this.generateBillModal = false;
           this.finalBillModal = true;
-          this.monthName = this.month[this.selectedMonth];
+          this.monthName = this.month[this.selectedMonth - 1];
           this.toastr.success('Bill generated successfully', 'Customer');
         }
         else {
@@ -326,7 +326,7 @@ export class RentInfoComponent implements OnInit {
           this.waterBill = x.data[0].waterBill;
           this.totalPayAmount = item.rentAmount + x.data[0].electricityBill + x.data[0].waterBill + previousDueAmount;
           this.finalBillModal = true;
-          this.monthName = this.month[this.selectedMonth];
+          this.monthName = this.month[this.selectedMonth - 1];
           this.modalBackDrop = true;
           this.customerName = item.firstName + ' ' + item.lastName;
           this.rentAmount = item.rentAmount;
