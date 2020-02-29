@@ -30,48 +30,47 @@
                         </div>
                         <!-- /.card-header -->
                         <!-- form start -->
+                        <!-- /.card-header -->
                         <div class="card-body">
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                                <table class="table table-striped" [svData]="hostelData" #sv="svDataTable"
-                                    [svRowsOnPage]="10" svSortOrder="asc">
-                                    <thead>
-                                        <tr>
-                                            <th>S.No.</th>
-                                            <th>Name</th>
-                                            <th>Created Date</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr *ngFor="let item of sv.data; let i = index">
-                                            <td>{{i+1}}</td>
-                                            <td>{{ item.name }}</td>
-                                            <td>{{ item.createdDate | date :'dd-MM-yyyy' }}</td>
-                                            <td>
-                                                <i class="fa fa-edit" title="Edit" (click)="editHostel(item)"></i>
-                                                <i class="fa fa-trash" data-toggle="modal" (click)="deleteModal(item)"></i>
-                                            </td>
-                                        </tr>
-                                        <tr *ngIf="hostelData!=undefined && hostelData.length<1">
-                                            <td></td>
-                                            <td></td>
-                                            <td>No data available</td>
-                                            <td></td>
-                                        </tr>
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td colspan="4">
-                                                <sv-bootstrap-paginator [rowsOnPageSet]="[10, 25]">
-                                                </sv-bootstrap-paginator>
-                                            </td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                            <!-- /.card-body -->
+                            <table class="table table-striped" [svData]="hostelData" #sv="svDataTable"
+                                [svRowsOnPage]="10" svSortBy="createdDate" svSortOrder="desc">
+                                <thead>
+                                    <tr>
+                                        <th>S.No.</th>
+                                        <th><sv-default-sorter by="name">Name</sv-default-sorter></th>
+                                        <th>
+                                            <sv-default-sorter by="createdDate">Created Date</sv-default-sorter></th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let item of sv.data; let i = index">
+                                        <td>{{i+1}}</td>
+                                        <td>{{ item.name }}</td>
+                                        <td>{{ item.createdDate | date :'dd-MM-yyyy' }}</td>
+                                        <td>
+                                            <i class="fa fa-edit" title="Edit" (click)="editHostel(item)"></i>
+                                            <i class="fa fa-trash" data-toggle="modal" (click)="deleteModal(item)"></i>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="hostelData!=undefined && hostelData.length<1">
+                                        <td></td>
+                                        <td></td>
+                                        <td>No data available</td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="4">
+                                            <sv-bootstrap-paginator [rowsOnPageSet]="[10, 25]">
+                                            </sv-bootstrap-paginator>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
                         </div>
+                        <!-- /.card-body -->
                     </div>
                     <!-- /.card -->
 
@@ -103,8 +102,8 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="name">Name</label><span>*</span>
-                                    <input type="text" class="form-control" id="name" formControlName='name' name="Name"
-                                        placeholder="Enter hostel name" autofocus autocomplete="off" maxlength="15">
+                                    <input type="text" class="form-control"  id="name" formControlName='name' name="Name"
+                                    [ngClass]="{'is-invalid' : hostelForm.controls.name.invalid && isSubmit}" placeholder="Enter hostel name" autofocus autocomplete="off" maxlength="15">
                                     <input type="hidden" formControlName='_id' />
                                 </div>
                             </div>
@@ -113,7 +112,7 @@
                 </form>
             </div>
             <div class="modal-footer justify-content-between admin-modal">
-                <button type="button" [disabled]="!hostelForm.valid" class="btn btn-primary modal-button"
+                <button type="button" class="btn btn-primary modal-button"
                     (click)="addUpdateHostel()">Save changes</button>
             </div>
         </div>
@@ -122,12 +121,13 @@
     <!-- /.modal-dialog -->
 </div>
 
-<div class="modal" id="modal-delete"  [style.display]="modalDelete ? 'block' :'none' ">
+<div class="modal" id="modal-delete" [style.display]="modalDelete ? 'block' :'none' ">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Delete Hostel</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="btnCloseDeleteModal()">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                    (click)="btnCloseDeleteModal()">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>

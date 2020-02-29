@@ -20,6 +20,7 @@ export class RoomInfoComponent implements OnInit {
   lblAddModalTitle = '';
   hostelData: any;
   hostelID = '0';
+  isSubmit = false;
   constructor(private service: CommonService, private spinner: NgxSpinnerService, private fb: FormBuilder
     , private toastr: ToastrService) { }
 
@@ -44,25 +45,27 @@ export class RoomInfoComponent implements OnInit {
   }
 
   getRoom(hostelID) {
-    this.spinner.show();
-    this.hostelID = hostelID;
-    var parameters = {
-      'isActive': true,
-      'hostelID': hostelID
-    }
-    this.service.Post('room/get', parameters).subscribe(
-      (x: any) => {
-        if (x.IsSuccess) {
-          this.roomData = x.data;
-          this.spinner.hide();
-        }
-        else {
-          console.log("error occured");
-        }
+    if (hostelID != '0') {
+      this.spinner.show();
+      this.hostelID = hostelID;
+      var parameters = {
+        'isActive': true,
+        'hostelID': hostelID
       }
-    );
+      this.service.Post('room/get', parameters).subscribe(
+        (x: any) => {
+          if (x.IsSuccess) {
+            this.roomData = x.data;
+            this.spinner.hide();
+          }
+          else {
+            console.log("error occured");
+          }
+        }
+      );
+    }
   }
-  getHostel(id = '') {
+  getHostel() {
     this.spinner.show();
     var parameters = {
       'isActive': true
@@ -85,12 +88,13 @@ export class RoomInfoComponent implements OnInit {
     this.getRoom(this.hostelID);
   }
   addUpdateRoom() {
-    debugger
+    this.isSubmit = true;
     if (this.form.valid) {
       this.spinner.show();
       this.service.Post('room/addUpdate', this.form.value).subscribe(
         (x: any) => {
           this.spinner.hide();
+          this.isSubmit = false;
           if (x.IsSuccess) {
             if (this.form.value._id)
               this.toastr.success('Updated successfully!', 'Room');
@@ -108,7 +112,7 @@ export class RoomInfoComponent implements OnInit {
       );
     }
     else {
-
+      this.toastr.error('Please fill mandatory fields!', 'Room');
     }
   }
   editModel(item) {

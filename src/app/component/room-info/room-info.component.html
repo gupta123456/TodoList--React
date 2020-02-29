@@ -28,29 +28,31 @@
                         </div>
                         <!-- /.card-header -->
                         <!-- form start -->
-                            <div class="card-body header-border">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="hostelID">Hostel</label>
-                                            <select class="form-control" id="hostelID" [(ngModel)]="hostelID"
-                                                (change)="getRoom($event.target.value)">
-                                                <option value="0" disabled>-- Select hostel --</option>
-                                                <option *ngFor="let item of hostelData" value="{{item._id}}">
-                                                    {{item.name}}
-                                                </option>
-                                            </select>
-                                        </div>
+                        <div class="card-body header-border">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="hostelID">Hostel</label>
+                                        <select class="form-control" id="hostelID" [(ngModel)]="hostelID"
+                                            (change)="getRoom($event.target.value)">
+                                            <option value="0" disabled>-- Select hostel --</option>
+                                            <option *ngFor="let item of hostelData" value="{{item._id}}">
+                                                {{item.name}}
+                                            </option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
+                        </div>
                         <div class="card-body">
                             <table class="table table-striped" [svData]="roomData" #sv="svDataTable" [svRowsOnPage]="10"
-                                svSortOrder="desc">
+                                svSortOrder="asc" svSortBy="createdDate">
                                 <thead>
                                     <tr>
                                         <th>S.No.</th>
-                                        <th>Name</th>
+                                        <th>
+                                            <sv-default-sorter by="name">Name</sv-default-sorter>
+                                        </th>
                                         <th>
                                             <sv-default-sorter by="createdDate">Created Date</sv-default-sorter>
                                         </th>
@@ -116,7 +118,8 @@
                                     <!-- input value for customer -->
                                     <input type="hidden" formControlName='_id'>
                                     <label for="hostelID">Hostel</label><span>*</span>
-                                    <select class="form-control" id="hostelID" formControlName='hostelID'>
+                                    <select class="form-control" id="hostelID" formControlName='hostelID'
+                                        [ngClass]="{'is-invalid' : form.controls.hostelID.value=='0' && isSubmit}">
                                         <option value='0' disabled>-- Select hostel --</option>
                                         <option *ngFor="let item of hostelData" [ngValue]="item._id">
                                             {{item.name}}
@@ -128,7 +131,7 @@
                                 <div class="form-group">
                                     <label for="name">Name</label><span>*</span>
                                     <input type="text" class="form-control" id="name" formControlName='name' name="Name"
-                                        placeholder="Enter room name" autofocus autocomplete="off" maxlength="15">
+                                    [ngClass]="{'is-invalid' : form.controls.name.invalid && isSubmit}"  placeholder="Enter room name" autofocus autocomplete="off" maxlength="15">
                                 </div>
                             </div>
                         </div>
@@ -136,8 +139,7 @@
                 </form>
             </div>
             <div class="modal-footer justify-content-between admin-modal">
-                <button type="button" [disabled]="!form.valid || form.value.hostelID=='0'"
-                    class="btn btn-primary modal-button" (click)="addUpdateRoom()">Save changes</button>
+                <button type="button" class="btn btn-primary modal-button" (click)="addUpdateRoom()">Save changes</button>
             </div>
         </div>
         <!-- /.modal-content -->

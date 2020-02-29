@@ -39,7 +39,6 @@ export class RentInfoComponent implements OnInit {
   monthName = '';
   selectedRoom = 0;
   chkDueAmount = false;
-  monthForm: any;
   constructor(private service: CommonService, private spinner: NgxSpinnerService, private fb: FormBuilder,
     @Inject(DOCUMENT) private document: Document, private toastr: ToastrService) { }
 
@@ -82,14 +81,7 @@ export class RentInfoComponent implements OnInit {
       billYear: [{ value: 0 }, Validators.required],
       paidAmount: [0]
     })
-    this.monthForm = this.fb.group({
-      hostelID: [0, Validators.required],
-      roomID: [0, Validators.required],
-      billMonth: [0, Validators.required],
-      billYear: [0, Validators.required],
-      dueAmount: [false]
-    })
-    this.getHostel('');
+    this.getHostel();
     this.getMonth();
     this.getYear();
   }
@@ -110,7 +102,7 @@ export class RentInfoComponent implements OnInit {
     this.modalBackDrop = true;
     this.document.body.classList.add('modal-open');
   }
-  getHostel(id = '') {
+  getHostel() {
     this.spinner.show();
     var parameters = {
       'isActive': true
@@ -119,6 +111,7 @@ export class RentInfoComponent implements OnInit {
       (x: any) => {
         if (x.IsSuccess) {
           this.hostelData = x.data;
+          this.selectedRoom = 0;
           this.spinner.hide();
         }
         else {
@@ -128,43 +121,41 @@ export class RentInfoComponent implements OnInit {
     );
   }
   getCustomer() {
-    this.spinner.show();
-    this.selectedMonth = this.monthForm.value.billMonth;
-    this.selectedYear = this.monthForm.value.billYear;
-    this.selectedRoom = this.monthForm.value.roomID;
-    this.chkDueAmount = this.monthForm.value.dueAmount
-    var parameters = {
-      'roomID': this.selectedRoom,
-      'isActive': true
-    }
-    this.service.Post('rent/getCustomerListByMonth', parameters).subscribe(
-      (x: any) => {
-        if (x.IsSuccess) {
-          this.customerData = [];
-          if (this.chkDueAmount) {
-            for (var i = 0; i < x.data.length; i++) {
-              if (x.data[i].rentInfo && x.data[i].rentInfo.length > 0) {
-                var selectedRentInfo = x.data[i].rentInfo.filter(x => x.billMonth == this.selectedMonth && x.billYear == this.selectedYear);
-                if (selectedRentInfo.length > 0 && selectedRentInfo[0].dueAmount > 0)
+    if (this.selectedRoom != 0 && this.selectedMonth != 0 && this.selectedYear != 0) {
+      this.spinner.show();
+      var parameters = {
+        'roomID': this.selectedRoom,
+        'isActive': true
+      }
+      this.service.Post('rent/getCustomerListByMonth', parameters).subscribe(
+        (x: any) => {
+          if (x.IsSuccess) {
+            this.customerData = [];
+            if (this.chkDueAmount) {
+              for (var i = 0; i < x.data.length; i++) {
+                if (x.data[i].rentInfo && x.data[i].rentInfo.length > 0) {
+                  var selectedRentInfo = x.data[i].rentInfo.filter(x => x.billMonth == this.selectedMonth && x.billYear == this.selectedYear);
+                  if (selectedRentInfo.length > 0 && selectedRentInfo[0].dueAmount > 0)
+                    this.customerData.push(x.data[i]);
+                  else if (selectedRentInfo.length < 1)
+                    this.customerData.push(x.data[i]);
+                }
+                else {
                   this.customerData.push(x.data[i]);
-                else if (selectedRentInfo.length < 1)
-                  this.customerData.push(x.data[i]);
-              }
-              else {
-                this.customerData.push(x.data[i]);
+                }
               }
             }
+            else {
+              this.customerData = x.data;
+            }
+            this.spinner.hide();
           }
           else {
-            this.customerData = x.data;
+            console.log("error occured");
           }
-          this.spinner.hide();
         }
-        else {
-          console.log("error occured");
-        }
-      }
-    );
+      );
+    }
   }
   btnCloseModal() {
     this.generateBillModal = false;

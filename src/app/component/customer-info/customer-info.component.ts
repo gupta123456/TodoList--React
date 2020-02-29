@@ -23,6 +23,7 @@ export class CustomerInfoComponent implements OnInit {
   roomData: any;
   hostelID = '0';
   roomID = '0';
+  isSubmit = false;
   constructor(private service: CommonService, private spinner: NgxSpinnerService,
     @Inject(DOCUMENT) private document: Document, private toastr: ToastrService) { }
 
@@ -76,7 +77,6 @@ export class CustomerInfoComponent implements OnInit {
     //this.getCustomer();
     this.getHostel();
   }
-
   btnAddModal() {
     this.document.body.classList.add('modal-open');
     this.customerForm.reset();
@@ -91,17 +91,20 @@ export class CustomerInfoComponent implements OnInit {
     this.lblAddModalTitle = 'Add';
   }
   btnCloseModal() {
-    this.getCustomer(this.roomID);
+    if (this.roomID != '0')
+      this.getCustomer(this.roomID);
     this.modalAddUpdate = false;
     this.modalBackDrop = false;
     this.document.body.classList.remove('modal-open');
   }
   addUpdateHostel() {
+    this.isSubmit = true;
     if (this.customerForm.valid) {
       this.spinner.show();
       this.service.Post('customer/addupdate', this.customerForm.value).subscribe(
         (x: any) => {
           this.spinner.hide();
+          this.isSubmit = false;
           if (x.IsSuccess) {
             if (this.customerForm.value._id)
               this.toastr.success('Updated successfully!', 'Customer');
@@ -124,7 +127,7 @@ export class CustomerInfoComponent implements OnInit {
       );
     }
     else {
-
+      this.toastr.error('Please fill mandatory fields!', 'Customer');
     }
   }
   getCustomer(roomID) {
@@ -176,7 +179,6 @@ export class CustomerInfoComponent implements OnInit {
     this.modalDelete = false;
     this.modalBackDrop = false;
   }
-
   confirmDelete(item) {
     var parameters = {
       '_id': this.deleteId
@@ -197,7 +199,6 @@ export class CustomerInfoComponent implements OnInit {
       }
     );
   }
-
   getHostel() {
     this.spinner.show();
     var parameters = {
@@ -226,6 +227,7 @@ export class CustomerInfoComponent implements OnInit {
       (x: any) => {
         if (x.IsSuccess) {
           this.roomData = x.data;
+          this.roomID = '0';
           this.spinner.hide();
         }
         else {

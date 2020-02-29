@@ -18,6 +18,7 @@ export class HostelInfoComponent implements OnInit {
   modalBackDrop = false;
   deleteId: any;
   lblAddModalTitle = '';
+  isSubmit = false;
 
   constructor(private service: CommonService, private spinner: NgxSpinnerService, private toastr: ToastrService) { }
 
@@ -50,15 +51,17 @@ export class HostelInfoComponent implements OnInit {
 
 
   addUpdateHostel() {
+    this.isSubmit = true;
     if (this.hostelForm.valid) {
       this.spinner.show();
       this.service.Post('hostel/addupdate', this.hostelForm.value).subscribe(
         (x: any) => {
           this.spinner.hide();
+          this.isSubmit = false;
           if (x.IsSuccess) {
             if (this.hostelForm.value._id)
               this.toastr.success('Updated successfully!', 'Hostel');
-            else{              
+            else {
               this.toastr.success('Added successfully!', 'Hostel');
               this.hostelForm.reset();
             }
@@ -70,7 +73,7 @@ export class HostelInfoComponent implements OnInit {
       );
     }
     else {
-
+      this.toastr.error('Please fill mandatory fields!', 'Hostel');
     }
   }
 
