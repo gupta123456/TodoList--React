@@ -15,6 +15,7 @@ import { NgxSpinnerModule } from "ngx-spinner";
 import { RentInfoComponent } from './component/rent-info/rent-info.component';
 import { RoomInfoComponent } from './component/room-info/room-info.component';
 import { ToastrModule } from 'ngx-toastr';
+import { LoginComponent } from './component/login/login.component';
 // import { DataTableModule } from "angular-6-datatable";
 
 
@@ -25,7 +26,8 @@ import { ToastrModule } from 'ngx-toastr';
     CustomerInfoComponent,
     HostelInfoComponent,
     RentInfoComponent,
-    RoomInfoComponent
+    RoomInfoComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,

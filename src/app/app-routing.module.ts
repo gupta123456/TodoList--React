@@ -5,9 +5,11 @@ import { LayoutComponent } from './shared/layout/layout.component';
 import { HostelInfoComponent } from './component/hostel-info/hostel-info.component';
 import { RentInfoComponent } from './component/rent-info/rent-info.component';
 import { RoomInfoComponent } from './component/room-info/room-info.component';
+import { LoginComponent } from './component/login/login.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'hostel-info', pathMatch: 'full' },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path : 'login', component: LoginComponent},
   {
     path: '', component: LayoutComponent, children: [
       { path: 'hostel-info', component: HostelInfoComponent },
