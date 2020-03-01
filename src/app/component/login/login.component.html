@@ -32,7 +32,7 @@
           [ngClass]="{'is-invalid' : SigninForm.controls.userName.invalid && isSubmit}">
           <div class="input-group-append">
             <div class="input-group-text">
-              <span class="fas fa-envelope"></span>
+              <span class="fas fa-user"></span>
             </div>
           </div>
         </div>
@@ -48,7 +48,7 @@
         <div class="row">
           <div class="col-8">
             <div class="icheck-primary">
-              <input type="checkbox" id="remember">
+              <input type="checkbox" id="remember" formControlName='rememberUser'>
               <label for="remember">
                 Remember Me
               </label>
@@ -65,6 +65,7 @@
     <!-- /.login-card-body -->
   </div>
 </div>
+<ngx-spinner></ngx-spinner>
 <!-- /.login-box -->
 
 <!-- jQuery -->

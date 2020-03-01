@@ -6,16 +6,17 @@ import { HostelInfoComponent } from './component/hostel-info/hostel-info.compone
 import { RentInfoComponent } from './component/rent-info/rent-info.component';
 import { RoomInfoComponent } from './component/room-info/room-info.component';
 import { LoginComponent } from './component/login/login.component';
+import { AuthGuard } from './common/auth.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path : 'login', component: LoginComponent},
+  { path: 'login', component: LoginComponent },
   {
     path: '', component: LayoutComponent, children: [
-      { path: 'hostel-info', component: HostelInfoComponent },
-      { path: 'room-info', component: RoomInfoComponent },
-      { path: 'customer-info', component: CustomerInfoComponent },
-      { path: 'rent-info', component: RentInfoComponent }
+      { path: 'hostel-info', canActivate: [AuthGuard], component: HostelInfoComponent },
+      { path: 'room-info', canActivate: [AuthGuard], component: RoomInfoComponent },
+      { path: 'customer-info', canActivate: [AuthGuard], component: CustomerInfoComponent },
+      { path: 'rent-info', canActivate: [AuthGuard], component: RentInfoComponent }
     ]
   },
   { path: '**', redirectTo: 'hostel-info', pathMatch: 'full' }

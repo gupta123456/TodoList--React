@@ -3,6 +3,8 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { NgxSpinnerService } from "ngx-spinner";
 import { Router } from '@angular/router';
 import { CommonService } from '../../common/common.service';
+import { ToastrService } from 'ngx-toastr';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-login',
@@ -12,8 +14,9 @@ import { CommonService } from '../../common/common.service';
 export class LoginComponent implements OnInit {
 
   SigninForm: any;
-  isSubmit= false;
-  constructor(private spinner: NgxSpinnerService, private router : Router, private service: CommonService) { }
+  isSubmit = false;
+  constructor(private spinner: NgxSpinnerService, private router: Router, private service: CommonService,
+    private toastr: ToastrService, private cookieService: CookieService) { }
 
   ngOnInit() {
     this.SigninForm = new FormGroup({
@@ -24,23 +27,37 @@ export class LoginComponent implements OnInit {
       password: new FormControl(
         null,
         Validators.required
+      ),
+      rememberUser: new FormControl(
+        null
       )
     });
   }
-  submit()
-  {
+  submit() {
     this.isSubmit = true;
-    if(this.SigninForm.valid)
-    {
+    if (this.SigninForm.valid) {
       this.spinner.show();
-      this.router.navigateByUrl('/hostel-info');
-      this.service.Post('',this.SigninForm.value).subscribe(
-        (x:any) =>{
-
+      this.service.Post('login/verifyUser', this.SigninForm.value).subscribe(
+        (x: any) => {
           this.spinner.hide();
           this.isSubmit = false;
+          if (x.IsSuccess && x.data) {
+            if (this.SigninForm.value.rememberUser) {
+              this.cookieService.set( 'user', x.data);
+            }
+            else {
+              sessionStorage.setItem('user', x.data);
+            }
+            this.router.navigateByUrl('/hostel-info');
+          }
+          else {
+            this.toastr.error('Invalid User or password!', 'Login');
+          }
         }
       );
+    }
+    else {
+      this.toastr.error('Please fill mandatory fields!', 'Login');
     }
   }
 }
