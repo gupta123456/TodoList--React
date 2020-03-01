@@ -43,10 +43,10 @@ export class LoginComponent implements OnInit {
           this.isSubmit = false;
           if (x.IsSuccess && x.data) {
             if (this.SigninForm.value.rememberUser) {
-              this.cookieService.set( 'user', x.data);
+              this.cookieService.set('user', JSON.stringify(x.data));
             }
             else {
-              sessionStorage.setItem('user', x.data);
+              sessionStorage.setItem('user', JSON.stringify(x.data));
             }
             this.router.navigateByUrl('/hostel-info');
           }

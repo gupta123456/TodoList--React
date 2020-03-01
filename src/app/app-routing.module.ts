@@ -12,11 +12,11 @@ const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   {
-    path: '', component: LayoutComponent, children: [
-      { path: 'hostel-info', canActivate: [AuthGuard], component: HostelInfoComponent },
-      { path: 'room-info', canActivate: [AuthGuard], component: RoomInfoComponent },
-      { path: 'customer-info', canActivate: [AuthGuard], component: CustomerInfoComponent },
-      { path: 'rent-info', canActivate: [AuthGuard], component: RentInfoComponent }
+    path: '', component: LayoutComponent, canActivate: [AuthGuard], children: [
+      { path: 'hostel-info', component: HostelInfoComponent },
+      { path: 'room-info', component: RoomInfoComponent },
+      { path: 'customer-info', component: CustomerInfoComponent },
+      { path: 'rent-info', component: RentInfoComponent }
     ]
   },
   { path: '**', redirectTo: 'hostel-info', pathMatch: 'full' }
