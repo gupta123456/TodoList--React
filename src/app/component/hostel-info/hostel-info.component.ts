@@ -26,7 +26,13 @@ export class HostelInfoComponent implements OnInit {
     private cookieService: CookieService) { }
 
   ngOnInit() {
+    var user = sessionStorage.getItem('user');
+    this.userInfo = JSON.parse(user);
     this.hostelForm = new FormGroup({
+      userID : new FormControl(
+        null,
+        Validators.required
+      ),
       name: new FormControl(
         null,
         Validators.required
@@ -35,8 +41,6 @@ export class HostelInfoComponent implements OnInit {
         null
       )
     });
-    var user = sessionStorage.getItem('user');
-    this.userInfo = JSON.parse(user);
 
     this.getHostel();
   }
@@ -56,9 +60,15 @@ export class HostelInfoComponent implements OnInit {
 
 
   addUpdateHostel() {
+    debugger
     this.isSubmit = true;
+    this.hostelForm.patchValue({
+      userID: this.userInfo._id
+    })
     if (this.hostelForm.valid) {
       this.spinner.show();
+      
+      console.log(this.hostelForm);
       this.service.Post('hostel/addupdate', this.hostelForm.value).subscribe(
         (x: any) => {
           this.spinner.hide();

@@ -32,6 +32,12 @@ export class LoginComponent implements OnInit {
         null
       )
     });
+
+    var userSession = sessionStorage.getItem('user');
+    if(userSession)
+    {
+      this.router.navigateByUrl('/hostel-info');
+    }
   }
   submit() {
     this.isSubmit = true;
