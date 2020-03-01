@@ -57,8 +57,7 @@ export class HostelInfoComponent implements OnInit {
     this.modalBackDrop = false;
     this.getHostel();
   }
-
-
+  
   addUpdateHostel() {
     debugger
     this.isSubmit = true;
@@ -135,7 +134,7 @@ export class HostelInfoComponent implements OnInit {
     this.modalAddUpdate = true;
     this.modalBackDrop = true;
     this.lblAddModalTitle = 'Update';
-    this.hostelForm.setValue(
+    this.hostelForm.patchValue(
       {
         'name': item.name,
         '_id': item._id

@@ -24,10 +24,13 @@ export class CustomerInfoComponent implements OnInit {
   hostelID = '0';
   roomID = '0';
   isSubmit = false;
+  userInfo: any;
   constructor(private service: CommonService, private spinner: NgxSpinnerService,
     @Inject(DOCUMENT) private document: Document, private toastr: ToastrService) { }
 
   ngOnInit() {
+    var user = sessionStorage.getItem('user');
+    this.userInfo = JSON.parse(user);
     this.customerForm = new FormGroup({
       hostelID: new FormControl(
         "0",
@@ -202,7 +205,8 @@ export class CustomerInfoComponent implements OnInit {
   getHostel() {
     this.spinner.show();
     var parameters = {
-      'isActive': true
+      'isActive': true,
+      'userID': this.userInfo._id
     }
     this.service.Post('hostel/get', parameters).subscribe(
       (x: any) => {

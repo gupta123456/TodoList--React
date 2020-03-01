@@ -39,10 +39,13 @@ export class RentInfoComponent implements OnInit {
   monthName = '';
   selectedRoom = 0;
   chkDueAmount = false;
+  userInfo: any;
   constructor(private service: CommonService, private spinner: NgxSpinnerService, private fb: FormBuilder,
     @Inject(DOCUMENT) private document: Document, private toastr: ToastrService) { }
 
   ngOnInit() {
+    var user = sessionStorage.getItem('user');
+    this.userInfo = JSON.parse(user);
     this.rentForm = new FormGroup({
       hostelID: new FormControl(
         '0',
@@ -105,7 +108,8 @@ export class RentInfoComponent implements OnInit {
   getHostel() {
     this.spinner.show();
     var parameters = {
-      'isActive': true
+      'isActive': true,
+      'userID': this.userInfo._id
     }
     this.service.Post('hostel/get', parameters).subscribe(
       (x: any) => {
@@ -130,12 +134,13 @@ export class RentInfoComponent implements OnInit {
       this.service.Post('rent/getCustomerListByMonth', parameters).subscribe(
         (x: any) => {
           if (x.IsSuccess) {
+            debugger
             this.customerData = [];
             if (this.chkDueAmount) {
               for (var i = 0; i < x.data.length; i++) {
                 if (x.data[i].rentInfo && x.data[i].rentInfo.length > 0) {
                   var selectedRentInfo = x.data[i].rentInfo.filter(x => x.billMonth == this.selectedMonth && x.billYear == this.selectedYear);
-                  if (selectedRentInfo.length > 0 && selectedRentInfo[0].dueAmount > 0)
+                  if ((selectedRentInfo.length > 0 && selectedRentInfo[0].dueAmount > 0) || (selectedRentInfo.length > 0 && selectedRentInfo[0].paidAmount == undefined))
                     this.customerData.push(x.data[i]);
                   else if (selectedRentInfo.length < 1)
                     this.customerData.push(x.data[i]);
@@ -181,7 +186,7 @@ export class RentInfoComponent implements OnInit {
           this.generateBillModal = false;
           this.finalBillModal = true;
           this.monthName = this.month[this.selectedMonth - 1];
-          this.toastr.success('Bill generated successfully', 'Customer');
+          this.toastr.success('Bill generated successfully!', 'Customer');
         }
         else {
           console.log("error occured");

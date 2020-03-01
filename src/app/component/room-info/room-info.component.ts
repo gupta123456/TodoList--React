@@ -21,16 +21,18 @@ export class RoomInfoComponent implements OnInit {
   hostelData: any;
   hostelID = '0';
   isSubmit = false;
+  userInfo: any;
   constructor(private service: CommonService, private spinner: NgxSpinnerService, private fb: FormBuilder
     , private toastr: ToastrService) { }
 
   ngOnInit() {
+    var user = sessionStorage.getItem('user');
+    this.userInfo = JSON.parse(user);
     this.form = this.fb.group({
       _id: [null],
       hostelID: ['0', Validators.required],
       name: [null, Validators.required]
     })
-    //this.getRoom();
     this.getHostel();
   }
 
@@ -43,7 +45,6 @@ export class RoomInfoComponent implements OnInit {
     this.modalBackDrop = true;
     this.lblAddModalTitle = 'Add';
   }
-
   getRoom(hostelID) {
     if (hostelID != '0') {
       this.spinner.show();
@@ -68,7 +69,8 @@ export class RoomInfoComponent implements OnInit {
   getHostel() {
     this.spinner.show();
     var parameters = {
-      'isActive': true
+      'isActive': true,
+      'userID': this.userInfo._id
     }
     this.service.Post('hostel/get', parameters).subscribe(
       (x: any) => {
