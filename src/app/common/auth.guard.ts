@@ -14,6 +14,7 @@ export class AuthGuard implements CanActivate {
     var userCookies = this.cookieService.get('user');
     var user = sessionStorage.getItem('user');
     if (userCookies || user) {
+      this.router.navigateByUrl('/hostel-info');
       return true;
     }
     this.router.navigateByUrl('/login');
