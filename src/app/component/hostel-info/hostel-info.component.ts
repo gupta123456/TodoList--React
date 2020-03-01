@@ -3,6 +3,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { CommonService } from '../../common/common.service';
 import { NgxSpinnerService } from "ngx-spinner";
 import { ToastrService } from 'ngx-toastr';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-hostel-info',
@@ -19,8 +20,10 @@ export class HostelInfoComponent implements OnInit {
   deleteId: any;
   lblAddModalTitle = '';
   isSubmit = false;
+  userInfo: any;
 
-  constructor(private service: CommonService, private spinner: NgxSpinnerService, private toastr: ToastrService) { }
+  constructor(private service: CommonService, private spinner: NgxSpinnerService, private toastr: ToastrService,
+    private cookieService: CookieService) { }
 
   ngOnInit() {
     this.hostelForm = new FormGroup({
@@ -32,6 +35,8 @@ export class HostelInfoComponent implements OnInit {
         null
       )
     });
+    var user = sessionStorage.getItem('user');
+    this.userInfo = JSON.parse(user);
 
     this.getHostel();
   }
@@ -77,10 +82,11 @@ export class HostelInfoComponent implements OnInit {
     }
   }
 
-  getHostel(id = '') {
+  getHostel() {
     this.spinner.show();
     var parameters = {
-      'isActive': true
+      'isActive': true,
+      'userID': this.userInfo._id
     }
     this.service.Post('hostel/get', parameters).subscribe(
       (x: any) => {
