@@ -82,10 +82,11 @@ export class HostelInfoComponent implements OnInit {
     }
   }
 
-  getHostel(id = '') {
+  getHostel() {
     this.spinner.show();
     var parameters = {
-      'isActive': true
+      'isActive': true,
+      'userID': this.userInfo._id
     }
     this.service.Post('hostel/get', parameters).subscribe(
       (x: any) => {
