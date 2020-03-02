@@ -91,7 +91,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <ng-container *ngIf="billYear!='0' && billMonth!='0'">
+                                    <ng-container *ngIf="selectedYear!=0 && selectedMonth!=0">
                                         <tr *ngFor="let item of sv.data; let i = index">
                                             <td>{{i+1}}</td>
                                             <td>{{ item.firstName +' '+ item.lastName }}</td>
@@ -106,7 +106,7 @@
                                         </tr>
                                     </ng-container>
                                     <tr
-                                        *ngIf="!customerData || customerData.length<1 || billYear=='0' || billMonth=='0'">
+                                        *ngIf="!customerData || customerData.length<1 || selectedMonth==0 || selectedYear==0">
                                         <td></td>
                                         <td>No data available</td>
                                         <td></td>
@@ -168,7 +168,7 @@
                                         <div class="col-md-6">
                                             <label for="billMonth">Month</label>
                                             <select class="form-control" id="billMonth" formControlName='billMonth'
-                                                disabled (ngModelChange)="getDueAmount()">
+                                                disabled>
                                                 <option value="0" selected>-- Select --</option>
                                                 <option *ngFor="let item of month; let i = index" [ngValue]="i+1">
                                                     {{item}}
@@ -178,7 +178,7 @@
                                         <div class="col-md-6">
                                             <label for="billYear">Year</label>
                                             <select class="form-control" id="billYear" formControlName='billYear'
-                                                disabled (ngModelChange)="getDueAmount()">
+                                                disabled>
                                                 <option value="0" selected>-- Select --</option>
                                                 <option *ngFor="let item of year" [ngValue]="item">
                                                     {{item}}

@@ -110,7 +110,7 @@ export class HostelInfoComponent implements OnInit {
     );
   }
 
-  deleteHostel(item) {
+  deleteHostel() {
     var parameters = {
       '_id': this.deleteId
     }

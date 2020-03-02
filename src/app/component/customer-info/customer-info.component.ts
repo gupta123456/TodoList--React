@@ -182,7 +182,7 @@ export class CustomerInfoComponent implements OnInit {
     this.modalDelete = false;
     this.modalBackDrop = false;
   }
-  confirmDelete(item) {
+  confirmDelete() {
     var parameters = {
       '_id': this.deleteId
     }

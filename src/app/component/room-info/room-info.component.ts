@@ -138,7 +138,7 @@ export class RoomInfoComponent implements OnInit {
     this.modalDelete = false;
     this.modalBackDrop = false;
   }
-  deleteRoom(item) {
+  deleteRoom() {
     var parameters = {
       '_id': this.deleteId
     }
