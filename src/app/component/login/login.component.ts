@@ -34,12 +34,14 @@ export class LoginComponent implements OnInit {
     });
 
     var userSession = sessionStorage.getItem('user');
-    if(userSession)
+    var usercookieSession = this.cookieService.get('user');
+    if(userSession || usercookieSession)
     {
       this.router.navigateByUrl('/hostel-info');
     }
   }
   submit() {
+    debugger
     this.isSubmit = true;
     if (this.SigninForm.valid) {
       this.spinner.show();

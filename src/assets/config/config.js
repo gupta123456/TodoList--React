@@ -1,3 +1,3 @@
 config = {
-    "APIUrl": "http://localhost:3000/",
+    APIUrl: "http://localhost:3000/",
 }

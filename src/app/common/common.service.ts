@@ -9,7 +9,7 @@ declare var config;
 })
 export class CommonService {
 
-  ApiUrl = 'http://localhost:3000/';//config.APIUrl;
+  ApiUrl = config.APIUrl;
   constructor(private httpClient: HttpClient) { }
 
   public Get(url) {
