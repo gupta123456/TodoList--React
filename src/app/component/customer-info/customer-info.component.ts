@@ -25,6 +25,7 @@ export class CustomerInfoComponent implements OnInit {
   roomID = '0';
   isSubmit = false;
   userInfo: any;
+  chkActive = true;
   constructor(private service: CommonService, private spinner: NgxSpinnerService,
     @Inject(DOCUMENT) private document: Document, private toastr: ToastrService) { }
 
@@ -137,7 +138,9 @@ export class CustomerInfoComponent implements OnInit {
     this.spinner.show();
     var parameters = {
       'isActive': true,
-      'roomID': roomID
+      'roomID': roomID,
+      'checkOutDate': { $gt: new Date() },
+      'getCheckOutData': !this.chkActive
     }
     this.service.Post('customer/get', parameters).subscribe(
       (x: any) => {
@@ -151,6 +154,28 @@ export class CustomerInfoComponent implements OnInit {
       }
     );
   }
+
+  getCheckOutCustomer(getCheckOutData) {
+    this.spinner.show();
+    var parameters = {
+      'isActive': true,
+      'checkOutDate': new Date(),
+      'roomID': this.roomID,
+      'getCheckOutData': !getCheckOutData
+    }
+    this.service.Post('customer/get', parameters).subscribe(
+      (x: any) => {
+        if (x.IsSuccess) {
+          this.customerData = x.data;
+          this.spinner.hide();
+        }
+        else {
+          console.log("error occured");
+        }
+      }
+    );
+  }
+
   editCustomer(item) {
     this.modalAddUpdate = true;
     this.modalBackDrop = true;

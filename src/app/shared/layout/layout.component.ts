@@ -11,7 +11,6 @@ export class LayoutComponent implements OnInit {
   constructor(private cookieService: CookieService) { }
 
   ngOnInit() {
-    debugger
     var userCookies = this.cookieService.get('user');
     var userSession = sessionStorage.getItem('user');
     if (userCookies && !userSession) {
